@@ -1,0 +1,104 @@
+
+\documentclass[10pt,a4paper,english]{report}
+\usepackage{amssymb}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\usepackage{makeidx}
+%\usepackage[T1]{fontenc}
+%%\usepackage[latin9]{inputenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{graphics}
+\usepackage[dvips]{epsfig}
+\usepackage{esint}
+\usepackage[authoryear]{natbib}
+\usepackage{rotating}
+\usepackage{relsize}
+\usepackage{Sweave}
+\usepackage{xcolor}
+\usepackage{babel}
+\usepackage{babel}
+\usepackage{hyperref}
+
+
+
+\begin{document}
+\title{Computer Exercise 2: Generalized Linear Models}
+\author{Lars Ronnegard}
+\maketitle
+\section*{Introduction}
+The objective of this exercise is to explore generalized linear models using some Poisson data and some binary data. Thereafter you will explore how to estimate the residual variance from a linear model using a Gamma distribution.
+
+
+\section*{Exercise 1}
+There are 15 observations from a Poisson distribution
+\begin{Schunk}
+\begin{Sinput}
+y <-  c(4, 5, 4, 5, 3, 1, 2, 3, 4, 8, 0, 1, 4, 0, 2)
+\end{Sinput}
+\end{Schunk}
+
+These data were generated from $Po(\lambda)$ and your task is to guess the value of $\lambda$. 
+
+\section*{Exercise 2}
+Use the glm() function in R to estimate $\lambda$. Do you get the same estimate as your guess in Exercise 1? \newline
+Plot diagnostics by plotting the output from the glm() function and try to understand what the plots show.
+Your code should look something like:
+\begin{Schunk}
+\begin{Sinput}
+mod1 <- glm(....)
+plot(mod1)
+\end{Sinput}
+\end{Schunk}
+
+\section*{Exercise 3}
+In a case-control study (with binary response variable $y$)  10 healthy and 10 sick individuals have been selected for a study. They were genotyped for a SNP suspected to be close to the causative mutation. The recorded genotypes were coded as 0, 1 or 2 (with 1=heterozygote) and saved as a vector $x$.    
+\begin{Schunk}
+\begin{Sinput}
+y <- c(0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1)
+x <- c(0,1,1,0,0,1,0,1,0,1,2,2,0,1,1,2,1,1,2,1)
+\end{Sinput}
+\end{Schunk}
+Use $y$ as response in a binomial GLM to check whether the SNP-effect is significant.
+
+\section*{Exercise 4}
+Let us have a look at the savings data again.
+\begin{Schunk}
+\begin{Sinput}
+library(faraway)
+data(savings) #See Faraway page 29
+?savings
+head(savings)
+summary(savings)
+g <- lm(sr ~ pop15 + pop75 + dpi + ddpi, data=savings)
+summary(g)
+\end{Sinput}
+\end{Schunk}
+What is the residual variance? \newline
+Now we will compute the residual variance using a Gamma distribution. First the residuals and hat values are extracted:
+\begin{Schunk}
+\begin{Sinput}
+res1 <- residuals(g)
+hv1 <- hatvalues(g)
+\end{Sinput}
+\end{Schunk}
+Check that the following code gives an estimate of the residual variance.
+\begin{Schunk}
+\begin{Sinput}
+response1 <- (res1^2)/(1-hv1)
+weight1 <- (1-hv1)/2
+glm1 <- glm(response1 ~ 1, weights = weight1, family=Gamma(link=log))
+summary(glm1)
+\end{Sinput}
+\end{Schunk}
+Compute a 95 \% confidence interval for the residual variance.
+
+\section*{Exercise 4 (if you get time)}
+Implement your own function in R for fitting a Poisson GLM using an Iterative Rewighted Least Squares algorithm.
+
+\end{document}
+
+

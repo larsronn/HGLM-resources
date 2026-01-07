@@ -1,0 +1,94 @@
+
+\documentclass[10pt,a4paper,english]{report}
+\usepackage{amssymb}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\usepackage{makeidx}
+%\usepackage[T1]{fontenc}
+%%\usepackage[latin9]{inputenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{graphics}
+\usepackage[dvips]{epsfig}
+\usepackage{esint}
+\usepackage[authoryear]{natbib}
+\usepackage{rotating}
+\usepackage{relsize}
+\usepackage{Sweave}
+\usepackage{xcolor}
+\usepackage{babel}
+\usepackage{hyperref}
+
+
+
+\begin{document}
+\title{Computer Exercise 1: Linear Regression}
+\author{Lars Ronnegard}
+\maketitle
+\section*{Introduction}
+The book \textbf{Practical Regression and Anova using R} by J. Faraway (2002)  available online \url{https://cran.r-project.org/doc/contrib/Faraway-PRA.pdf} gives an excellent introduction to linear regression and model diagnostics in R. The following data is analyzed in the book and the data is available in the accompanying  R package \textbf{faraway}.
+
+The savings data set includes data from an old economic study on 50 different countries. These data
+are averages over 1960-1970 (to remove business cycle or other short-term fluctuations). dpi is per-capita
+disposable income in U.S. dollars; ddpi is the percent rate of change in per capita disposable income; sr
+is aggregate personal saving divided by disposable income. The percentage population under 15 (pop15)
+and over 75 (pop75) are also recorded. The data come from Belsley, Kuh, and Welsch (1980).
+
+The objective of the first two exercises is to try to understand which variables that affect the proportion of aggregate personal savings (sr), and to check whether the results are sensitive to single observations.
+
+\section*{Exercise 1}
+Have a look at the savings data and the regression results following the R code below. 
+Make a first exploratory inspection of the data by plotting the data in different ways, and using descriptive statistics.
+Are the residuals normally distributed?
+Are there any signs of heteroscedasticity?
+Are there any signs of observations being dependent?
+
+\begin{Schunk}
+
+\begin{Sinput}
+library(faraway)
+data(savings) #See Faraway page 29
+?savings
+head(savings)
+summary(savings)
+g <- lm(sr ~ pop15 + pop75 + dpi + ddpi, data=savings)
+summary(g)
+
+plot(savings$sr)
+for (i in 1:length(savings$sr) ) {
+  text(x=i, y=savings$sr[i], labels=(rownames(savings)[i]), cex=1)
+}
+
+
+\end{Sinput}
+
+\end{Schunk}
+
+%%%%%%%%%%%%%%%
+\begin{figure}[h]
+\center \includegraphics[width=1.0\textwidth]{CompEx1_Fig1}
+\caption{Response variable ordered as they appear in data set.}
+\label{fig:CompEx1_Fig1}
+\end{figure}
+
+
+\section*{Exercise 2}
+Delete Sweden from the data set and see how the results changes.
+Delete Libya from the data set and see how the results changes.
+Which country's result influenced the data most?
+
+\section*{Exercise 3 (if you get time)}
+ Produce Figure 2 with your own R code
+
+\begin{figure}[h]
+\center \includegraphics[width=1.0\textwidth]{CompEx1_Fig2}
+\caption{Scatter plot.}
+\label{fig:CompEx1_Fig2}
+\end{figure}
+
+\end{document}
+
+
