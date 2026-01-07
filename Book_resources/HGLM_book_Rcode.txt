@@ -1,0 +1,2020 @@
+
+
+Chapter 1
+Call:
+glm(formula = y ~ B + T + A + B:T + V, family = poisson(link = log),
+    data = epilepsy)
+Deviance Residuals:
+    Min       1Q   Median       3Q      Max
+-5.0677  -1.4468  -0.2655   0.8164  11.1387
+Coefficients:
+            Estimate Std. Error z value Pr(>|z|)
+(Intercept) -2.79763    0.40729  -6.869 6.47e-12 ***
+B            0.94952    0.04356  21.797  < 2e-16 ***
+T           -1.34112    0.15674  -8.556  < 2e-16 ***
+A            0.89705    0.11644   7.704 1.32e-14 ***
+V           -0.02936    0.01014  -2.895  0.00379 **
+B:T          0.56223    0.06350   8.855  < 2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+(Dispersion parameter for poisson family taken to be 1)
+    Null deviance: 2521.8  on 235  degrees of freedom
+Residual deviance:  869.9  on 230  degrees of freedom
+AIC: 1647.9
+Number of Fisher Scoring iterations: 5
+ Family: poisson  ( log )
+Formula: y ~ B + T + A + B:T + V + (1 | patient)
+   Data: epilepsy
+     AIC      BIC   logLik deviance df.resid
+  1345.3   1369.5   -665.6   1331.3      229
+Scaled residuals:
+    Min      1Q  Median      3Q     Max
+-3.2832 -0.8875 -0.0842  0.6415  7.2819
+Random effects:
+ Groups  Name        Variance Std.Dev.
+ patient (Intercept) 0.2515   0.5015
+Number of obs: 236, groups:  patient, 59
+Fixed effects:
+            Estimate Std. Error z value Pr(>|z|)
+(Intercept) -1.37817    1.17746  -1.170  0.24181
+B            0.88442    0.13075   6.764 1.34e-11 ***
+T           -0.93291    0.39883  -2.339  0.01933 *
+A            0.48450    0.34584   1.401  0.16123
+V           -0.02936    0.01009  -2.910  0.00362 **
+B:T          0.33827    0.20247   1.671  0.09477 .
+Call:
+hglm2.formula(meanmodel = y ~ B + T + A + B:T + V + (1 | patient),
+    data = epilepsy, family = poisson(link = log), fix.disp = 1)
+----------
+MEAN MODEL
+----------
+Summary of the fixed effects estimates:
+            Estimate Std. Error t-value Pr(>|t|)
+(Intercept) -1.29517    1.22155  -1.060  0.29040
+B            0.87197    0.13590   6.416 1.13e-09 ***
+T           -0.91685    0.41292  -2.220  0.02760 *
+A            0.47184    0.35878   1.315  0.19008
+V           -0.02936    0.01014  -2.895  0.00425 **
+B:T          0.33137    0.21015   1.577  0.11654
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+Note: P-values are based on 186 degrees of freedom
+----------------
+DISPERSION MODEL
+----------------
+Dispersion parameter for the random effects:
+[1] 0.2747
+Call:
+hglm2.formula(meanmodel = y ~ B + T + A + B:T + V + (1 | id) +
+    (1 | patient), data = epilepsy, family = poisson(link = log),
+    rand.family = list(Gamma(link = log), gaussian()), fix.disp = 1)
+----------
+MEAN MODEL
+----------
+Summary of the fixed effects estimates:
+            Estimate Std. Error t-value Pr(>|t|)
+(Intercept) -1.27757    1.21959  -1.048   0.2971
+B            0.87262    0.13560   6.435 3.01e-09 ***
+T           -0.91389    0.41202  -2.218   0.0285 *
+A            0.46674    0.35827   1.303   0.1953
+V           -0.02652    0.01633  -1.624   0.1072
+B:T          0.32983    0.20966   1.573   0.1184
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+Note: P-values are based on 114 degrees of freedom
+----------------
+DISPERSION MODEL
+----------------
+Dispersion parameter for the random effects:
+[1] 0.1258 0.2430
+\begin{Sinput}
+library(dhglm)
+data(epilepsy)
+model1 <- glm(y ~ B + T + A + B:T + V, family = poisson(link=log),
+	data=epilepsy)
+summary(model1)
+library(lme4)
+model2 <- glmer(y ~ B + T + A + B:T + V + (1 | patient),
+	family = poisson(link=log), data=epilepsy)
+summary(model2)
+library(hglm)
+model3 <- hglm2(y ~ B + T + A + B:T + V + (1 | patient),
+	family=poisson(link=log),
+	fix.disp=1, data=epilepsy)
+# The option fix.disp=1 holds the dispersion parameter constant,
+# since the dispersion parameter is 1 for a Poisson distribution.
+# In later examples, we will see that the dispersion can be modelled
+# in the hglm function, which is not possible in lme4 functions.
+model4 <- hglm2(y ~ B + T + A + B:T + V + (1 | id) + (1 | patient),
+	family=poisson(link=log),
+	rand.family = list(Gamma(link=log), gaussian()),
+	fix.disp=1, data=epilepsy)
+summary(model4)
+\end{Sinput}
+
+
+Chapter 2
+Call:
+glm(formula = cbind(yes, no) ~ x, family = binomial)
+Deviance Residuals:
+      1        2        3        4
+-0.8346   1.2521   0.2758  -0.6845
+Coefficients:
+            Estimate Std. Error z value Pr(>|z|)
+(Intercept) -3.86625    0.16621 -23.261  < 2e-16 ***
+x            0.39734    0.05001   7.945 1.94e-15 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+(Dispersion parameter for binomial family taken to be 1)
+    Null deviance: 65.9045  on 3  degrees of freedom
+Residual deviance:  2.8089  on 2  degrees of freedom
+AIC: 27.061
+Number of Fisher Scoring iterations: 4
+Call:
+glm(formula = y ~ x, family = poisson, offset = log(t))
+Deviance Residuals:
+    Min       1Q   Median       3Q      Max
+-2.0580  -0.7825  -0.0826   0.3775   3.3873
+Coefficients:
+            Estimate Std. Error z value Pr(>|z|)
+(Intercept) -4.21142    0.15892  -26.50  < 2e-16 ***
+x           -0.03292    0.01076   -3.06  0.00222 **
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+(Dispersion parameter for poisson family taken to be 1)
+    Null deviance: 47.376  on 28  degrees of freedom
+Residual deviance: 37.853  on 27  degrees of freedom
+AIC: 133.52
+Number of Fisher Scoring iterations: 5
+\begin{Sinput}
+yes <- c(24, 35, 21, 30)
+no <- c(1355, 603, 192, 224)
+x <- c(0, 2, 4, 5)
+snoring <- glm(cbind(yes,no) ~ x, family=binomial)
+\end{Sinput}
+\begin{Sinput}
+x <- rep(1975:2003)-1975
+y<-c(2,12,8,4,3,2,2,3,7,3,5,13,6,4,4,2,6,4,4,4,2,2,1,4,2,3,4,3,3)
+t<-c(436,426,425,430,426,430,417,372,401,389,418,414,397,443,436,
++ 431,439,430,425,415,423,437,463,487,505,503,508,516,518)
+trainres1 <- glm( y~ x, family=poisson, offset=log(t))
+## This can be available at mdhglm package
+## data(train,package="mdhglm")
+# model checking plot
+train<-data.frame(cbind(x,y,t))
+model_mu<-DHGLMMODELING(Model="mean",Link="log",
+LinPred=y~x, Offset=log(t))
+model_phi<-DHGLMMODELING(Model="dispersion")
+fit<-dhglmfit(RespDist="poisson",DataMain=train,
+MeanModel=model_mu,DispersionModel=model_phi)
+plotdhglm(fit)
+\end{Sinput}
+\begin{Sinput}
+data(epilepsy, package="dhglm")
+model0 <- glm(y ~ B + T + A + B:T + V, family=gaussian,
+          data=epilepsy)
+plot(model0, which=2)
+model1 <- glm(y~B+T+A+T*B+V, family=poisson(link=log),
+             data=epilepsy)
+plot(model1, which=2)
+plot(hatvalues(model1))
+\end{Sinput}
+\begin{Sinput}
+jobsatis <- c(2,4,13,3, 2,6,22,4, 0,1,15,8, 0,3,13,8)
+jobsatis1 <- matrix(jobsatis,byrow=TRUE,nrow=4)
+dimnames(jobsatis1) <- list(
++ Income=c("<5","5-15","15-25",">25"),
++ Satisfac=c("VD","LS","MS","VS"))
+\end{Sinput}
+\begin{Sinput}
+data(stackloss, package="mdhglm")
+# y : the percentage of the ingoing ammonia lost escaping
+#     with the unabsorbed nitric oxdes
+# x1 : airflow
+# x2 : inlet temperature of the cooling water in degrees C
+# x3 : acid concentration
+# x1-x3 were coded by subtracting 50 and multiplying by 10
+\end{Sinput}
+\begin{Sinput}
+data(ghq, package="mdhglm")
+# SEX : 0(=Male), 1(=FEMALE)
+# CASE : 0(=Non-case), 1(=Case)
+# GHQ : general health questionair score
+# count : number of patients
+# total : number of non-case and case patients
+\end{Sinput}
+\begin{Sinput}
+data(ozone, package="mdhglm")
+# y : ozone concentration
+# x1 - x9 : nine meteorological variables
+\end{Sinput}
+
+
+Chapter 3
+Summary of the fixed effects estimates:
+            Estimate Std. Error t-value Pr(>|t|)
+(Intercept) -1.29517    1.22155  -1.060  0.29040
+B            0.87197    0.13590   6.416 1.13e-09 ***
+T           -0.91685    0.41292  -2.220  0.02760 *
+A            0.47184    0.35878   1.315  0.19008
+V           -0.02936    0.01014  -2.895  0.00425 **
+B:T          0.33137    0.21015   1.577  0.11654
+Dispersion parameter for the random effects:
+[1] 0.2747
+---------------
+LOG-LIKELIHOODS
+---------------
+h-likelihood: -624.3322
+Adjusted profile likelihood
+   Profiled over random effects: -665.7751
+   Profiled over fixed and random effects: -674.242
+Conditional AIC: 1272.685
+EQL estimation converged in 5 iterations.
+library(hglm)
+data(epilepsy, package="dhglm")
+model3 <- hglm(fixed = y ~ B + T + A + B:T + V, random= ~ 1 | patient,
+           family=poisson(link=log),
+           fix.disp=1, data=epilepsy,
+           calc.like = TRUE)
+#Likelihoods for model without interaction effect
+logLik(hglm(fixed = y ~ B + T + A + V,  random= ~1|patient,
+             family=poisson(link=log), fix.disp=1,
+             data=epilepsy, calc.like=TRUE))
+
+
+Chapter 4
+Distribution of Main Response :
+                      "gaussian"
+[1] "Estimates from the model(mu)"
+y ~ a + c + d + e + g + n + c:n + e:n
+[1] "log"
+             Estimate Std. Error  t-value
+(Intercept)  0.799731   0.009739  82.1156
+a            0.148589   0.035390   4.1987
+c            0.068703   0.030886   2.2244
+d           -0.152098   0.009727 -15.6373
+e            0.011748   0.031591   0.3719
+g           -0.074357   0.034873  -2.1323
+n           -0.006003   0.007506  -0.7997
+c:n          0.188582   0.034184   5.5166
+e:n         -0.173397   0.034201  -5.0699
+[1] "Estimates from the model(phi)"
+phi ~ a + f
+[1] "log"
+            Estimate Std. Error t-value
+(Intercept)   -2.849     0.3002  -9.492
+a             -0.608     0.2979  -2.041
+f              2.324     0.2974   7.817
+[1] "========== Likelihood Function Values and Condition AIC =========="
+                             [,1]
+-2ML (-2 h)          :  -9.368466
+-2RL (-2 p_beta (h)) :  52.746052
+cAIC                 :   8.631534
+Scaled deviance: 23.0000 on 23.0000 degrees of freedom
+Distribution of Main Response :
+                         "gamma"
+[1] "Estimates from the model(mu)"
+y ~ crack0
+[1] "log"
+            Estimate Std. Error t-value
+(Intercept)   -5.934    0.10268  -57.79
+crack0         2.626    0.08672   30.28
+[1] "Estimates from the model(phi)"
+phi ~ cycle
+[1] "log"
+            Estimate Std. Error t-value
+(Intercept)   -2.127     0.1929 -11.025
+cycle        -10.419     2.7240  -3.825
+[1] "========== Likelihood Function Values and Condition AIC =========="
+                             [,1]
+-2ML (-2 h)          :  -1435.545
+-2RL (-2 p_beta (h)) :  -1426.044
+cAIC                 :  -1431.545
+Scaled deviance: 239.0000 on 239.0000 degrees of freedom
+Estimates from hglm
+Summary of the fixed effects estimates:
+            Estimate Std. Error t-value Pr(>|t|)
+(Intercept)  1.57467    0.07529  20.915  < 2e-16 ***
+ClBase4      0.87889    0.13460   6.529 1.82e-09 ***
+CTrt        -0.33306    0.15158  -2.197   0.0300 *
+CBT          0.35010    0.20844   1.680   0.0957 .
+ClAge        0.48093    0.35565   1.352   0.1789
+CV4         -0.10191    0.08597  -1.185   0.2383
+Log of variance components
+     Estimate Std. Error
+Ind    -1.441     0.2277
+rand   -2.062     0.1623
+Estimates from INLA
+Fixed effects:
+               mean     sd 0.025quant 0.5quant 0.975quant    mode
+(Intercept)  1.5765 0.0761     1.4242   1.5774     1.7241  1.5791
+ClBase4      0.8795 0.1344     0.6143   0.8795     1.1443  0.8795
+CTrt        -0.3328 0.1514    -0.6333  -0.3322    -0.0364 -0.3308
+CBT          0.3507 0.2079    -0.0587   0.3505     0.7606  0.3501
+ClAge        0.4831 0.3552    -0.2208   0.4844     1.1793  0.4869
+CV4         -0.1031 0.0853    -0.2707  -0.1032     0.0646 -0.1034
+Model hyperparameters:
+                   mean   sd     0.025quant 0.5quant 0.975quant mode
+Precision for Ind   4.610  1.327  2.570      4.423    7.751      4.098
+Precision for rand  8.536  2.161  5.207      8.230   13.654      7.679
+Log of variance components (from posterior modes)
+      Estimate
+Ind   -1.410
+rand  -2.038
+\begin{Sinput}
+data(injection, package="mdhglm")
+injection[,2:11] <- 2*(injection[,2:11] - 1.5)
+#Make explanatory variables -1 and 1
+model_mu4<-DHGLMMODELING(Model="mean",Link="log",
+	LinPred=y~a+c+d+e+g+n+c:n+e:n)
+model_phi4<-DHGLMMODELING(Model="dispersion",Link="log",LinPred=phi~a+f)
+fit4<-dhglmfit(RespDist="gaussian",DataMain=injection,
+	MeanModel=model_mu4,DispersionModel=model_phi4)
+plotdhglm(fit4)
+plotdhglm(fit4,type="phi")
+\end{Sinput}
+\begin{Sinput}
+data(crack_growth, package="dhglm")
+model_mu<-DHGLMMODELING(Model="mean",Link="log",
+          LinPred=y~crack0)
+model_phi<-DHGLMMODELING(Model="dispersion",Link="log",LinPred=phi~cycle)
+fit1<-dhglmfit(RespDist="gamma",DataMain=crack_growth,
+         MeanModel=model_mu,DispersionModel=model_phi)
+plotdhglm(fit1)
+\end{Sinput}
+\begin{Sinput}
+data(bacteria, package="MASS")
+y1 <- 1*(bacteria$y=="y")
+bacteria <- data.frame(cbind(bacteria, y1))
+###### lme4 package #########
+#Estimates using glmer
+library(lme4)
+glmer.est <- numeric(3)
+nAGQ <- c(0,1,25)
+ for (i in nAGQ) {
+     model.glmer <- glmer(y ~ trt  + (1 | ID), family = binomial,
+                            data = bacteria, nAGQ = i)
+     print(model.glmer@theta^2)
+ }
+\end{Sinput}
+\begin{Sinput}
+###### dhglm package estimates #########
+library(dhglm)
+model_mu<-DHGLMMODELING(Model="mean", Link="logit",
+                      LinPred=y1 ~ trt  + (1 | ID),RandDist="gaussian")
+model_phi<-DHGLMMODELING(Model="dispersion")
+#ML estimates
+dhglm11<-dhglmfit(RespDist="binomial", DataMain=bacteria,
+                     MeanModel=model_mu, DispersionModel=model_phi, PhiFix=1,
+                     mord=1, dord=1, REML=FALSE)
+dhglm12<-dhglmfit(RespDist="binomial", DataMain=bacteria,
+                    MeanModel=model_mu, DispersionModel=model_phi, PhiFix=1,
+                   mord=1, dord=2, REML=FALSE)
+#REML estimates
+dhglm01<-dhglmfit(RespDist="binomial", DataMain=bacteria,
+                    MeanModel=model_mu, DispersionModel=model_phi, PhiFix=1,
+                   mord=0, dord=1)
+dhglm11<-dhglmfit(RespDist="binomial", DataMain=bacteria,
+                   MeanModel=model_mu, DispersionModel=model_phi, PhiFix=1,
+                  mord=1, dord=1)
+dhglm12<-dhglmfit(RespDist="binomial", DataMain=bacteria,
+                   MeanModel=model_mu, DispersionModel=model_phi, PhiFix=1,
+                   mord=1, dord=2)
+\end{Sinput}
+\begin{Sinput}
+source("http://www.math.ntnu.no/inla/givemeINLA.R")
+library(INLA)
+#Following code for centering copied from the INLA web page
+data(Epil)
+my.center = function(x) (x - mean(x))
+## make centered covariates
+Epil$CTrt    = my.center(Epil$Trt)
+Epil$ClBase4 = my.center(log(Epil$Base/4))
+Epil$CV4     = my.center(Epil$V4)
+Epil$ClAge   = my.center(log(Epil$Age))
+Epil$CBT     = my.center(Epil$Trt*Epil$ClBase4)
+hglm.epi <- hglm2(y ~ClBase4 + CTrt + CBT+ ClAge + CV4 + (1|Ind) + (1|rand),
+                family=poisson(link=log), fix.disp=1, data=Epil, method="EQL1")
+\end{Sinput}
+model.mean <- lm(y~x)
+e <- resid(model.mean)
+hv <- hatvalues(model.mean)
+model.variance <- glm( (e^2)/(1-hv)~1, family=Gamma(link=log),
+                             weights=(1-hv)/2 )
+fitted(model.variance)[1]
+model.variance <- glm( (e^2)/(1-hv)~x, family=Gamma(link=log),
+                            weights=(1-hv)/2 )
+summary(model.variance)
+fm2 <- lmer(Reaction ~ Days + (1|Subject), sleepstudy)
+lm( y~.-1, data=data.frame(Xa) )
+fm2 <- lmer(Reaction ~ Days + (1|Subject) + (0+Days|Subject),
+                    sleepstudy)
+
+
+Chapter 5
+Distribution of Main Response :
+                      "gaussian"
+[1] "Estimates from the model(mu)"
+Angle ~ Recipe * Temperature + (1 | Replicate) + (1 | Replicate:Recipe)
+[1] "log"
+                       Estimate Std. Error t-value
+(Intercept)             3.36789    0.06151 54.7505
+Recipe2                -0.09715    0.06212 -1.5639
+Recipe3                -0.04392    0.06058 -0.7250
+Temperature185          0.06114    0.05332  1.1467
+Temperature195          0.04789    0.05365  0.8926
+Temperature205          0.13079    0.05166  2.5317
+Temperature215          0.27854    0.04870  5.7192
+Temperature225          0.17573    0.05069  3.4669
+Recipe2:Temperature185  0.03814    0.07808  0.4885
+Recipe3:Temperature185 -0.03516    0.07718 -0.4555
+Recipe2:Temperature195  0.12876    0.07696  1.6731
+Recipe3:Temperature195  0.06739    0.07579  0.8890
+Recipe2:Temperature205  0.04892    0.07553  0.6477
+Recipe3:Temperature205 -0.04232    0.07487 -0.5653
+Recipe2:Temperature215 -0.01590    0.07223 -0.2202
+Recipe3:Temperature215 -0.08822    0.07115 -1.2399
+Recipe2:Temperature225  0.09613    0.07345  1.3088
+Recipe3:Temperature225  0.07012    0.07172  0.9777
+[1] "Estimates for logarithm of lambda=var(u_mu)"
+[1] "gaussian" "gaussian"
+                  Estimate Std. Error t-value
+Replicate          -3.509     0.3933   -8.92
+Replicate:Recipe   -5.523     0.3556  -15.53
+[1] "Estimates from the model(phi)"
+phi ~ 1
+<environment: 0x0000000018820ee0>
+[1] "log"
+            Estimate Std. Error t-value
+(Intercept)    2.996    0.09465   31.65
+[1] "========== Likelihood Function Values and Condition AIC =========="
+                                       [,1]
+-2ML (-2 p_v(mu) (h))          :  1632.1657
+-2RL (-2 p_beta(mu),v(mu) (h)) :  1714.1769
+cAIC                           :  1621.8752
+Scaled deviance: 223.2533 on 223.2533 degrees of freedom
+Distribution of Main Response :
+                         "gamma"
+[1] "Estimates from the model(mu)"
+Angle ~ Recipe * Temperature + (1 | Replicate) + (1 | Replicate:Recipe)
+[1] "log"
+                        Estimate Std. Error t-value
+(Intercept)             3.353710    0.05965 56.2235
+Recipe2                -0.078756    0.05609 -1.4042
+Recipe3                -0.054051    0.05609 -0.9637
+Temperature185          0.093259    0.05046  1.8480
+Temperature195          0.061417    0.05046  1.2170
+Temperature205          0.149099    0.05046  2.9546
+Temperature215          0.287415    0.05046  5.6955
+Temperature225          0.192808    0.05046  3.8207
+Recipe2:Temperature185 -0.009348    0.07137 -0.1310
+Recipe3:Temperature185 -0.051220    0.07137 -0.7177
+Recipe2:Temperature195  0.097807    0.07137  1.3705
+Recipe3:Temperature195  0.074481    0.07137  1.0436
+Recipe2:Temperature205  0.028579    0.07137  0.4004
+Recipe3:Temperature205 -0.038842    0.07137 -0.5443
+Recipe2:Temperature215 -0.049499    0.07137 -0.6936
+Recipe3:Temperature215 -0.064864    0.07137 -0.9089
+Recipe2:Temperature225  0.081865    0.07137  1.1471
+Recipe3:Temperature225  0.057664    0.07137  0.8080
+[1] "Estimates for logarithm of lambda=var(u_mu)"
+[1] "gaussian" "gaussian"
+                  Estimate Std. Error t-value
+Replicate          -3.514     0.3939  -8.922
+Replicate:Recipe   -5.405     0.3426 -15.776
+[1] "Estimates from the model(phi)"
+phi ~ 1
+<environment: 0x000000001c09d700>
+[1] "log"
+            Estimate Std. Error t-value
+(Intercept)   -3.958    0.09472  -41.79
+[1] "========== Likelihood Function Values and Condition AIC =========="
+                                       [,1]
+-2ML (-2 p_v(mu) (h))          :  1616.1173
+-2RL (-2 p_beta(mu),v(mu) (h)) :  1697.8489
+cAIC                           :  1604.3866
+Scaled deviance: 222.0713 on 222.0713 degrees of freedom
+Distribution of Main Response :
+                       "poisson"
+[1] "Estimates from the model(mu)"
+y ~ x + (1 | rf)
+[1] "log"
+            Estimate Std. Error t-value
+(Intercept)  -3.7799     1.4431  -2.619
+   x          0.9424     0.2257   4.176
+[1] "Estimates for logarithm of lambda=var(u_mu)"
+[1] "gamma"
+   Estimate Std. Error t-value
+rf   -2.076     0.3626  -5.726
+[1] "========== Likelihood Function Values and Condition AIC =========="
+                                       [,1]
+-2ML (-2 p_v(mu) (h))          :  175.75612
+-2RL (-2 p_beta(mu),v(mu) (h)) :  179.91955
+cAIC                           :  172.76822
+Scaled deviance: 14.33785 on 14.43390 degrees of freedom
+Distribution of Main Response :
+                       "poisson"
+[1] "Estimates from the model(mu)"
+y ~ x + (1 | id)
+[1] "log"
+            Estimate Std. Error t-value
+(Intercept) -4.13382    0.22286 -18.549
+x           -0.03632    0.01451  -2.503
+[1] "Estimates for logarithm of lambda=var(u_mu)"
+[1] "gamma"
+   Estimate Std. Error t-value
+id   -1.753     0.4239  -4.137
+[1] "========== Likelihood Function Values and Condition AIC =========="
+                                       [,1]
+-2ML (-2 p_v(mu) (h))          :  127.96315
+-2RL (-2 p_beta(mu),v(mu) (h)) :  136.99910
+cAIC                           :  129.85364
+Scaled deviance: 11.35076 on 15.58182 degrees of freedom
+## Results for HL(1,1)
+Distribution of Main Response :
+                      "binomial"
+[1] "Estimates from the model(mu)"
+Mate ~ TypeM + TypeF + TypeM * TypeF + (1 | Male) + (1 | Female)
+[1] "logit"
+              Estimate Std. Error t-value
+(Intercept)     1.0429     0.3928   2.655
+TypeMW         -0.7288     0.4535  -1.607
+TypeFW         -3.0037     0.5211  -5.764
+TypeMW:TypeFW   3.7110     0.5567   6.666
+[1] "Estimates for logarithm of lambda=var(u_mu)"
+[1] "gaussian" "gaussian"
+       Estimate Std. Error t-value
+Male     0.1948     0.2798  0.6962
+Female   0.3043     0.2725  1.1169
+[1] "========== Likelihood Function Values and Condition AIC =========="
+                                      [,1]
+-2ML (-2 p_v(mu) (h))          :  418.7125
+-2RL (-2 p_beta(mu),v(mu) (h)) :  419.0264
+cAIC                           :  401.8995
+Scaled deviance: 272.6058 on 295.3528 degrees of freedom
+## Results for HL(1,2)
+Distribution of Main Response :
+                      "binomial"
+[1] "Estimates from the model(mu)"
+Mate ~ TypeM + TypeF + TypeM * TypeF + (1 | Male) + (1 | Female)
+[1] "logit"
+              Estimate Std. Error t-value
+(Intercept)     1.0196     0.3964   2.572
+TypeMW         -0.7239     0.4569  -1.584
+TypeFW         -2.9727     0.5251  -5.661
+TypeMW:TypeFW   3.6644     0.5591   6.554
+[1] "Estimates for logarithm of lambda=var(u_mu)"
+[1] "gaussian" "gaussian"
+       Estimate Std. Error t-value
+Male     0.2153     0.2786  0.7727
+Female   0.3234     0.2715  1.1912
+[1] "========== Likelihood Function Values and Condition AIC =========="
+                                      [,1]
+-2ML (-2 p_v(mu) (h))          :  418.7776
+-2RL (-2 p_beta(mu),v(mu) (h)) :  419.0257
+cAIC                           :  401.7016
+Scaled Deviance:  271.2692 on 294.7835 degrees of freedom
+Distribution of Main Response :
+                      "gaussian"
+[1] "Estimates from the model(mu)"
+Width ~ A + B + C + G + H + (1 | Wafer)
+[1] "identity"
+             Estimate Std. Error   t-value
+(Intercept)  2.452702    0.04932  49.72959
+A2           0.377821    0.04639   8.14494
+B2          -0.567583    0.04111 -13.80802
+C2           0.387664    0.04349   8.91408
+C3           0.521416    0.05229   9.97211
+G2          -0.176381    0.05095  -3.46176
+G3          -0.393040    0.04537  -8.66211
+H2          -0.003333    0.04724  -0.07055
+H3           0.306740    0.05129   5.98033
+[1] "Estimates for logarithm of lambda=var(u_mu)"
+[1] "gaussian"
+            Estimate Std. Error t-value
+(Intercept)   -4.778     0.6662  -7.172
+E2            -1.299     1.1530  -1.127
+E3             1.489     0.8625   1.726
+[1] "Estimates from the model(phi)"
+phi ~ A + E + F + G
+[1] "log"
+            Estimate Std. Error   t-value
+(Intercept) -4.71051     0.3293 -14.30494
+A2          -0.86224     0.2436  -3.53958
+E2          -0.01587     0.3045  -0.05211
+E3           0.67716     0.2923   2.31661
+F2           0.69656     0.2998   2.32370
+F3           1.04301     0.2990   3.48779
+G2          -0.14500     0.2902  -0.49964
+G3          -0.65146     0.2992  -2.17701
+[1] "========== Likelihood Function Values and Condition AIC =========="
+                                       [,1]
+-2ML (-2 p_v(mu) (h))          :  -232.1114
+-2RL (-2 p_beta(mu),v(mu) (h)) :  -188.7905
+cAIC                           :  -255.0044
+Scaled deviance: 137.0051 on 137.0051 degrees of freedom
+Distribution of Main Response :
+                         "gamma"
+[1] "Estimates from the model(mu)"
+y ~ x1 + x3 + x5 + x6 + (1 | Device)
+[1] "log"
+            Estimate Std. Error t-value
+(Intercept)  -4.7114    0.06676 -70.568
+x1            0.2089    0.06623   3.154
+x3            0.3281    0.06676   4.915
+x5           -0.1739    0.06623  -2.626
+x6           -0.3573    0.06618  -5.399
+[1] "Estimates for logarithm of lambda=var(u_mu)"
+[1] "gaussian"
+       Estimate Std. Error t-value
+Device   -3.014     0.5149  -5.854
+[1] "Estimates from the model(phi)"
+phi ~ x2 + x3
+[1] "log"
+            Estimate Std. Error t-value
+(Intercept)  -2.6102     0.1954 -13.358
+x2           -0.6730     0.1953  -3.446
+x3           -0.4915     0.1952  -2.518
+[1] "========== Likelihood Function Values and Condition AIC =========="
+                                       [,1]
+-2ML (-2 p_v(mu) (h))          :  -573.8579
+-2RL (-2 p_beta(mu),v(mu) (h)) :  -555.9127
+cAIC                           :  -578.1991
+Scaled deviance: 51.4562 on 51.4562 degrees of freedom
+Distribution of Main Response :
+                      "binomial"
+[1] "Estimates from the model(mu)"
+y ~ as.factor(treatment) + as.factor(sex) + age + as.factor(center) +
+    baseline + past + (1 | patient)
+[1] "logit"
+                      Estimate Std. Error t-value
+(Intercept)           -0.69014    0.60964 -1.1320
+as.factor(treatment)1  1.25595    0.41480  3.0279
+as.factor(sex)1        0.26118    0.59717  0.4374
+age                   -0.03503    0.01854 -1.8890
+as.factor(center)2     0.68157    0.41922  1.6258
+baseline               1.82060    0.44629  4.0794
+past                   0.57539    0.30431  1.8908
+[1] "Estimates for logarithm of lambda=var(u_mu)"
+[1] "gaussian"
+            Estimate Std. Error t-value
+(Intercept) -0.68345    0.73711 -0.9272
+age          0.04726    0.02021  2.3387
+[1] "========== Likelihood Function Values and Condition AIC =========="
+                                      [,1]
+-2ML (-2 p_v(mu) (h))          :  431.0405
+-2RL (-2 p_beta(mu),v(mu) (h)) :  438.3807
+cAIC                           :  422.4576
+Scaled deviance: 298.0320 on 381.7868 degrees of freedom
+Distribution of Main Response :
+                      "gaussian"
+[1] "Estimates from the model(mu)"
+y ~ time + (1 | st) + (1 | qt)
+[1] "identity"
+             Estimate Std. Error   t-value
+(Intercept) 4.807e+00   0.032301 148.81066
+time        8.381e-05   0.007217   0.01161
+[1] "Estimates for logarithm of lambda=var(u_mu)"
+[1] "gaussian" "gaussian"
+     Estimate Std. Error t-value
+st   -5.368     0.1805  -29.74
+qt  -11.864     0.5113  -23.20
+[1] "Estimates from the model(phi)"
+phi ~ 1
+<environment: 0x0000000008472730>
+[1] "log"
+            Estimate Std. Error t-value
+(Intercept)   -6.056     0.2325  -26.05
+[1] "========== Likelihood Function Values and Condition AIC =========="
+                                        [,1]
+-2ML (-2 p_v(mu) (h))          :  -159.27062
+-2RL (-2 p_beta(mu),v(mu) (h)) :  -145.50763
+cAIC                           :  -298.60811
+Scaled deviance: 31.01180 on 31.01181 degrees of freedom
+Distribution of Main Response :
+                      "gaussian"
+[1] "Estimates from the model(mu)"
+y ~ time + as.factor(quarter) + time * as.factor(quarter) + t43 +
+    t44 + cos1 + sin1 + (1 | time)
+[1] "identity"
+                           Estimate Std. Error  t-value
+(Intercept)               5.0794620  0.1197486  42.4177
+time                      0.0157092  0.0088362   1.7778
+as.factor(quarter)2      -0.0945533  0.0336858  -2.8069
+as.factor(quarter)3      -0.4892068  0.0395240 -12.3775
+as.factor(quarter)4      -0.3597921  0.0514351  -6.9951
+t43                       0.4715085  0.0891348   5.2898
+t44                      -0.3907317  0.1212623  -3.2222
+cos1                     -0.0610581  0.1035216  -0.5898
+sin1                     -0.1431079  0.0915608  -1.5630
+time:as.factor(quarter)2 -0.0060673  0.0005432 -11.1695
+time:as.factor(quarter)3 -0.0094092  0.0006257 -15.0369
+time:as.factor(quarter)4  0.0004577  0.0008025   0.5704
+[1] "Estimates for logarithm of lambda=var(u_mu)"
+[1] "gaussian"
+     Estimate Std. Error t-value
+st   -12.09     0.6979  -17.33
+[1] "Estimates from the model(phi)"
+phi ~ as.factor(quarter)
+[1] "log"
+                    Estimate Std. Error t-value
+(Intercept)          -5.8645     0.3002 -19.539
+as.factor(quarter)2   0.5402     0.4191   1.289
+as.factor(quarter)3   0.9439     0.4210   2.242
+as.factor(quarter)4   1.5791     0.4189   3.770
+[1] "========== Likelihood Function Values and Condition AIC =========="
+                                        [,1]
+-2ML (-2 p_v(mu) (h))          :  -230.41079
+-2RL (-2 p_beta(mu),v(mu) (h)) :  -148.96252
+cAIC                           :  -228.12313
+Scaled deviance: 91.95559 on 91.95559 degrees of freedom
+\begin{Sinput}
+data(cake,package="mdhglm")
+cake$Recipe<-as.factor(cake$Recipe)
+cake$Temperature<-as.factor(cake$Temperature)
+cake$Replicate<-as.factor(cake$Replicate)
+model_mu<-DHGLMMODELING(Model="mean",Link="log",
+	LinPred=Angle~Recipe*Temperature
+	+(1|Replicate)+(1|Replicate:Recipe),RandDist=c("gaussian","gaussian"))
+model_phi<-DHGLMMODELING(Model="dispersion")
+fit1<-dhglmfit(RespDist="gaussian",DataMain=cake,
+	MeanModel=model_mu,DispersionModel=model_phi)
+plotdhglm(fit1)
+\end{Sinput}
+\begin{Sinput}
+model_mu<-DHGLMMODELING(Model="mean",Link="log",
+	LinPred=Angle~Recipe*Temperature
+	+(1|Replicate)+(1|Replicate:Recipe),RandDist=c("gaussian","gaussian"))
+model_phi<-DHGLMMODELING(Model="dispersion")
+fit2<-dhglmfit(RespDist="gamma",DataMain=cake,
+	MeanModel=model_mu,DispersionModel=model_phi)
+plotdhglm(fit2)
+\end{Sinput}
+\begin{Sinput}
+data(fabric, package="mdhglm")
+fabric$x<-log(fabric$x)
+model_mu<-DHGLMMODELING(Model="mean",Link="log",LinPred=y~x+(1|rf),
+	RandDist="gamma")
+model_phi<-DHGLMMODELING(Model="dispersion")
+fit1<-dhglmfit(RespDist="poisson",DataMain=fabric,
+	MeanModel=model_mu,DispersionModel=model_phi)
+plotdhglm(fit1)
+\end{Sinput}
+\begin{Sinput}
+data(train,package="mdhglm")
+model_mu<-DHGLMMODELING(Model="mean",Link="log",
+LinPred=y~x+(1|id), Offset=log(train$t), RandDist="gamma")
+model_phi<-DHGLMMODELING(Model="dispersion")
+fit<-dhglmfit(RespDist="poisson",DataMain=train,
+MeanModel=model_mu,DispersionModel=model_phi)
+qqnorm(fit[[2]],main="Poisson-gamma HGLM")
+qqline(fit[[2]])
+\end{Sinput}
+\begin{Sinput}
+data(salamander, package="mdhglm")
+model_mu<-DHGLMMODELING(Model="mean",Link="logit",
+	LinPred=Mate~TypeM+TypeF+TypeM*TypeF+(1|Male)+(1|Female),
+	RandDist=c("gaussian","gaussian"))
+model_phi<-DHGLMMODELING(Model="dispersion")
+fit11<-dhglmfit(RespDist="binomial",DataMain=salamander,mord=1,dord=1,
+	MeanModel=model_mu,DispersionModel=model_phi)
+fit12<-dhglmfit(RespDist="binomial",DataMain=salamander,mord=1,dord=2,
+	MeanModel=model_mu,DispersionModel=model_phi)
+\end{Sinput}
+\begin{Sinput}
+data(circuit, package="mdhglm")
+circuit$A<-as.factor(circuit$A)
+circuit$B<-as.factor(circuit$B)
+circuit$C<-as.factor(circuit$C)
+circuit$D<-as.factor(circuit$D)
+circuit$E<-as.factor(circuit$E)
+circuit$F<-as.factor(circuit$F)
+circuit$G<-as.factor(circuit$G)
+circuit$H<-as.factor(circuit$H)
+circuit$I<-as.factor(circuit$I)
+model_mu<-DHGLMMODELING(Model="mean", Link="identity",
+	LinPred=Width~A+B+C+G+H+(1|Wafer),RandDist="gaussian",
+	LinkRandVariance="log",LinPredRandVariance=lambda~1+E)
+model_phi<-DHGLMMODELING(Model="dispersion", Link="log", LinPred=phi~A+E+F+G)
+circuit_model<-dhglmfit(RespDist="gaussian",DataMain=circuit,
+	MeanModel=model_mu,DispersionModel=model_phi)
+plotdhglm(circuit_model)
+\end{Sinput}
+\begin{Sinput}
+data(semicon, package="mdhglm")
+model_mu<-DHGLMMODELING(Model="mean", Link="log",
+	LinPred=y~x1+x3+x5+x6+(1|Device),RandDist="gaussian")
+model_phi<-DHGLMMODELING(Model="dispersion", Link="log", LinPred=phi~x2+x3)
+fit3<-dhglmfit(RespDist="gamma",DataMain=semicon,
+	MeanModel=model_mu,DispersionModel=model_phi)
+plotdhglm(fit3)
+\end{Sinput}
+\begin{Sinput}
+data(respiratory, package="mdhglm")
+model_mu_5<-DHGLMMODELING(Model="mean", Link="logit",
+LinPred=y~as.factor(treatment)+as.factor(sex)+age+as.factor(center)
++baseline+past+(1|patient),RandDist="gaussian",
+LinkRandVariance="log",LinPredRandVariance=lambda~1+age)
+model_phi_5<-DHGLMMODELING(Model="dispersion",Link="log")
+fit4<-dhglmfit(RespDist="binomial",DataMain=respiratory,
+ MeanModel=model_mu_5,DispersionModel=model_phi_5,mord=0)
+plotdhglm(fit4,type="lambda")
+\end{Sinput}
+\begin{Sinput}
+data(Orthodont,package="nlme")
+Orthodont$nsex <- as.numeric(Orthodont$Sex=="Male")
+Orthodont$nsexage <- with(Orthodont, nsex*age)
+model_mu<-DHGLMMODELING(Model="mean", Link="identity",
+LinPred=distance~ nsex + age + nsexage +
+(1|Subject)+(age|Subject),RandDist="gaussian")
+model_phi<-DHGLMMODELING(Model="dispersion")
+res_hglm<-dhglmfit(RespDist="gaussian",DataMain=Orthodont,
+MeanModel=model_mu,DispersionModel=model_phi)
+\end{Sinput}
+\begin{Sinput}
+data(gas,package="mdhglm")
+gas$t43<-ifelse(gas$time==43,1,0)
+gas$t44<-ifelse(gas$time==44,1,0)
+ft<-matrix(0,108,108)
+st<-matrix(0,108,108)
+wt<-matrix(0,108,108)
+for (i in 1:108) {
+   for (j in 1:i) {
+       ft[i,j]<-1
+   }
+}
+for (i in 1:108) {
+    for (j in 1:i) {
+       st[i,j]<-(i-j+1)
+    }
+}
+for (i in 1:108) {
+    if (i==1) wt[i,1]<-1
+    if (i==2) {
+           wt[i,1]<-1
+           wt[i,2]<-1
+    }
+    if (i==3) {
+           wt[i,1]<-1
+           wt[i,2]<-1
+           wt[i,3]<-1
+    }
+    if (i>3) {
+       for (j in 1:4) {
+           ii<-i-j+1
+           wt[i,ii]<-1
+       }
+   }
+}
+qt<-solve(wt)
+gas$cos1<-cos(6.2831853070*gas$time/104)
+gas$sin1<-sin(6.2831853070*gas$time/104)
+model_mu<-DHGLMMODELING(Model="mean", Link="identity",
+LinPred=y~time+(1|time)+(1|time),
+RandDist=c("gaussian","gaussian"),
+LMatrix=list(st,qt))
+model_phi<-DHGLMMODELING(Model="dispersion")
+res_hglm1<-dhglmfit(RespDist="gaussian",DataMain=gas,
+MeanModel=model_mu,DispersionModel=model_phi)
+plothglm(res_hglm1)
+model_mu<-DHGLMMODELING(Model="mean", Link="identity",
+LinPred=y~time+as.factor(quarter)+
+time*as.factor(quarter)+t43+t44+cos1+sin1
++(1|time),RandDist="gaussian",
+LMatrix=list(st))
+model_phi<-DHGLMMODELING(Model="dispersion",Link="log",
+LinPred=phi~as.factor(quarter))
+res_hglm2<-dhglmfit(RespDist="gaussian",DataMain=gas,
+MeanModel=model_mu,DispersionModel=model_phi)
+plotdhglm(res_hglm2)
+\end{Sinput}
+\begin{Sinput}
+data(cancer)
+logE <- log(E)
+XX <- model.matrix(~ Paff)
+#M3
+cancerCAR <- hglm(X = XX, y = O, Z = diag(56),
+         family = poisson(),
+         rand.family = CAR(D = nbr),
+         offset = logE, conv = 1e-8,
+         maxit = 200, fix.disp = 1)
+summary(cancerCAR)
+\end{Sinput}
+\begin{Sinput}
+data(cancer, package="hglm.data")
+county <- factor(1:56)
+lip <- data.frame(cbind(logE, O, Paff, county))
+#M1
+model_mu<-DHGLMMODELING(Model="mean", Link="log", LinPred=O~Paff+(1|county),
+RandDist="gaussian",LinkRandVariance="log",
+             LinPredRandVariance=lambda~1, Offset=logE)
+model_phi<-DHGLMMODELING(Model="dispersion")
+res_hglm<-dhglmfit(RespDist="poisson",DataMain=lip,
+           MeanModel=model_mu,DispersionModel=model_phi)
+plotdhglm(res_hglm)
+#M2
+res_hglm2<-HGLMREML.h(y~x+(1|country),Offset=lip$n,DataMain=lip,
+	RespDist="Poisson",RespLink="log",RandDist="normal",
+	mord=0,dord=1,spatial="IAR",Neighbor=adjacent)
+#M3
+res_hglm3<-HGLMREML.h(y~x+(1|country),Offset=lip$n,DataMain=lip,
+	RespDist="Poisson",RespLink="log",RandDist="normal",
+	mord=0,dord=1,spatial="MRF",Neighbor=adjacent)
+\end{Sinput}
+\begin{Sinput}
+data(Loaloa)
+Loaloa$y <- Loaloa$npos
+Loaloa$n <- Loaloa$ntot
+Loaloa$x1 <- Loaloa$elev1
+Loaloa$x2 <- Loaloa$elev2
+Loaloa$x3 <- Loaloa$elev3
+Loaloa$x4 <- Loaloa$elev4
+Loaloa$x5 <- Loaloa$maxNDVI1
+Loaloa$x6 <- Loaloa$seNDVI
+Loaloa$LOC <- c(1:197)
+#M1
+model_mu<-DHGLMMODELING(Model="mean", Link="logit",
+LinPred=y~x1+x2+x3+x4+x5+x6+(1|LOC),
+RandDist="gaussian")
+model_phi<-DHGLMMODELING(Model="dispersion")
+res_hglm<-dhglmfit(RespDist="binomial",
+BinomialDen=Loaloa$n,DataMain=Loaloa,
+MeanModel=model_mu,DispersionModel=model_phi)
+#M2
+model_mu<-DHGLMMODELING(Model="mean", Link="logit",
+LinPred=y~x1+x2+x3+x4+x5+x6+(1|LOC),
+RandDist="gaussian",spatial=Matern,
+longitude=longitude,
+latitude=latitude)
+model_phi<-DHGLMMODELING(Model="dispersion")
+res_hglm<-dhglmfit(RespDist="binomial",
+BinomialDen=Loaloa$n,DataMain=Loaloa,
+MeanModel=model_mu,DispersionModel=model_phi)
+#
+\end{Sinput}
+\begin{Sinput}
+data(Prestige,package="car")
+model_mu<-DHGLMMODELING(Model="mean", Link=''identity'',
+LinPred=prestige~income+education,spline=c("cubic","cubic"))
+model_phi<-DHGLMMODELING(Model="dispersion")
+res<-dhglmfit(RespDist="gaussian",DataMain=Prestige,
+MeanModel=model_mu,DispersionModel=model_phi)
+\end{Sinput}
+\begin{Sinput}
+data(blackcap,package="spaMM")
+# latitude : latitude, indeed.
+# longitude : longitude, indeed.
+# migStatus : migration status as determined by Mueller et al,
+#  from 0 (resident populations) to 2.5
+#  (long-distance migratory populations)
+# means : Mean allele sizes in each population
+# pos : Numerical index for the populations
+\end{Sinput}
+
+
+Chapter 6
+> data(crack_growth)
+> dhglmfit(RespDist="gamma",DataMain=crack_growth,
++ MeanModel=model_mu,DispersionModel=model_phi)
+> model_mu<-DHGLMMODELING(Model="mean", Link="log", LinPred=y~crack0)
+> model_phi<-DHGLMMODELING(Model="dispersion")
+> glm(y~crack0,crack_growth,family=Gamma(link = ''log''))
+> model_mu<-DHGLMMODELING(Model="mean", Link="log", LinPred=y~crack0)
+> model_phi<-DHGLMMODELING(Model="dispersion", Link="log", LinPred=phi~cycle)
+> fitjoint("glm", y~crack0, d~cycle, data = crack_growth,
++ family.mean=Gamma(link=''log''),family.disp=Gamma(link=''log''))
+> model_mu<-DHGLMMODELING(Model="mean", Link="log", LinPred=y~crack0+(1|specimen),
++ RandDist="inverse-gamma")
+> model_phi<-DHGLMMODELING(Model="dispersion")
+> glmer(y~crack0+(1|specimen),family = Gamma(link="log"),
++ data = crack_growth,nAGQ = 20)
+> glmmPQL(y ~ crack0, random = ~ 1 | specimen,
++ family = Gamma(link="log"), data = crack_growth)
+> model_mu<-DHGLMMODELING(Model="mean", Link="log", LinPred=y~crack0+(1|specimen),
++ RandDist="inverse-gamma")
+> model_phi<-DHGLMMODELING(Model="dispersion", Link="log", LinPred=phi~cycle)
+> model_mu<-DHGLMMODELING(Model="mean", Link="log", LinPred=y~crack0+(1|specimen),
++ RandDist="inverse-gamma",LinPredRandVariance=lambda~1+(1|specimen),
++ LinkRandVariance="log")
+> model_phi<-DHGLMMODELING(Model=''dispersion'', Link=''log'', LinPred=phi~cycle)
+> model_mu<-DHGLMMODELING(Model="mean", Link="log", LinPred=y~crack0+(1|specimen),
++ RandDist="inverse-gamma")
+> model_phi<-DHGLMMODELING(Model="dispersion", Link="log",
++ LinPred=phi~cycle+(1|specimen),RandDist=''gaussian'')
+> model_mu<-DHGLMMODELING(Model="mean", Link="log", LinPred=y~crack0+(1|specimen),
++ RandDist="inverse-gamma",LinPredRandVariance=lambda~1+(1|specimen),
++ LinkRandVariance="log")
+> model_phi<-DHGLMMODELING(Model="dispersion", Link="log",
++ LinPred=phi~cycle+(1|specimen),RandDist="gaussian")
+> plotdhglm(res_crack_growth_hglm2)
+> plotdhglm(res_crack_growth_dhglm2)
+> data(exch,package="mdhglm")
+> model_mu<-DHGLMMODELING(Model="mean", Link="identity",
++ LinPred=yt~1)
+> model_phi<-DHGLMMODELING(Model="dispersion", Link="identity",
++ LinPred=phi~yt12)
+> res_arch<-dhglmfit(RespDist="gaussian",DataMain=exch,
++ MeanModel=model_mu, DispersionModel=model_phi, BetaFix=0)
+> model_mu<-DHGLMMODELING(Model=''mean'', Link=''log'',
++ LinPred=yt~1)
+> model_phi<-DHGLMMODELING(Model=''dispersion'', Link=''identity'',
++ LinPred=phi~1+(1|date), RandDist=''gaussian'',corr=''GARCH'')
+> res_garch<-dhglmfit(RespDist="gaussian",DataMain=exch,
++ MeanModel=model_mu, DispersionModel=model_phi, BetaFix=0)
+> model_mu<-DHGLMMODELING(Model="mean", Link="log",
++ LinPred=yt~1)
+> model_phi<-DHGLMMODELING(Model=''dispersion'', Link=''log'',
++ LinPred=phi~1+(1|date), RandDist=''gaussian'',corr=''AR'')
+> res_sv<-dhglmfit(RespDist="gaussian",DataMain=exch,
++ MeanModel=model_mu, DispersionModel=model_phi, BetaFix=0)
+> exch$yt2<-exch$yt^2
+> model_mu<-DHGLMMODELING(Model="mean", Link="log",
++ LinPred=yt2~1+(1|date),
++ RandDist="gaussian",corr="AR")
+> model_phi<-DHGLMMODELING(Model="dispersion", Link="identity")
+> res_sv1<-dhglmfit(RespDist="gamma",DataMain=exch,
++ MeanModel=model_mu, DispersionModel=model_phi,PhiFix=2)
+\begin{Sinput}
+data(Orthodont,package="nlme")
+Orthodont$nsex <- as.numeric(Orthodont$Sex=="Male")
+Orthodont$nsexage <- with(Orthodont, nsex*age)
+model_mu<-DHGLMMODELING(Model="mean", Link="identity",
+LinPred=distance~ nsex + age + nsexage +
+(1|Subject)+(age|Subject),RandDist="gaussian")
+model_phi<-DHGLMMODELING(Model="dispersion",
+Link="log",
+phi~1+(1|Subject),RandDist="gaussian")
+res_dhglm<-dhglmfit(RespDist="gaussian",DataMain=Orthodont,
+MeanModel=model_mu,DispersionModel=model_phi)
+plotdhglm(res_dhglm)
+\end{Sinput}
+> data(sch, package="mdhglm")
+> model_mu<-DHGLMMODELING(Model="mean", Link="identity",
++ LinPred=y~x1+x2+time+sch+sch*x1+sch*x2+(1|subject),RandDist="gaussian")
+> model_phi<-DHGLMMODELING(Model="dispersion",Link="log", LinPred=phi~sch)
+> reshglm<-dhglmfit(RespDist="gaussian",DataMain=sch,
++ MeanModel=model_mu,DispersionModel=model_phi)
+Distribution of Main Response :
+                      "gaussian"
+[1] "Estimates from the model(mu)"
+y ~ x1 + x2 + time + sch + sch * x1 + sch * x2 + (1 | subject)
+[1] "identity"
+             Estimate Std. Error  t-value
+(Intercept)  0.811250   0.013744  59.0240
+x1           0.006425   0.004525   1.4197
+x2          -0.121455   0.004930 -24.6351
+time        -0.002430   0.000436  -5.5740
+sch         -0.036096   0.019525  -1.8487
+x1:sch      -0.028978   0.007009  -4.1343
+x2:sch      -0.007240   0.007847  -0.9226
+[1] "Estimates for logarithm of lambda=var(u_mu)"
+[1] "gaussian"
+        Estimate Std. Error t-value
+subject   -4.839     0.1565  -30.91
+[1] "Estimates from the model(phi)"
+phi ~ sch
+[1] "log"
+            Estimate Std. Error  t-value
+(Intercept)   -5.320    0.03667 -145.082
+sch            0.251    0.05337    4.703
+[1] "========== Likelihood Function Values and Condition AIC =========="
+                                       [,1]
+-2ML (-2 p_v(mu) (h))          :  -6550.164
+-2RL (-2 p_beta(mu),v(mu) (h)) :  -6488.259
+cAIC                           :  -6780.296
+Scaled deviance: 2817.382 on 2817.382 degrees of freedom
+> model_mu<-DHGLMMODELING(Model=''mean'', Link=''identity'',
++ LinPred=y~x1+x2+time+sch+sch*x1+sch*x2+(1|subject),RandDist="gaussian")
+> model_phi<-DHGLMMODELING(Model="dispersion",Link="log",
++ LinPred=phi~sch+(sch|subject),RandDist="gaussian")
+> resdhglm<-dhglmfit(RespDist="gaussian",DataMain=sch,
++ MeanModel=model_mu,DispersionModel=model_phi)
+Distribution of Main Response :
+                      "gaussian"
+[1] "Estimates from the model(mu)"
+y ~ x1 + x2 + time + sch + sch * x1 + sch * x2 + (1 | subject)
+[1] "identity"
+             Estimate Std. Error  t-value
+(Intercept)  0.812285  0.0136394  59.5541
+x1           0.003068  0.0038326   0.8004
+x2          -0.117130  0.0042559 -27.5218
+time        -0.002267  0.0003695  -6.1368
+sch         -0.037156  0.0193825  -1.9170
+x1:sch      -0.019516  0.0058599  -3.3305
+x2:sch      -0.008516  0.0065643  -1.2973
+[1] "Estimates for logarithm of lambda=var(u_mu)"
+[1] "gaussian"
+        Estimate Std. Error t-value
+subject   -4.853     0.1566  -30.98
+[1] "Estimates from the model(phi)"
+phi ~ sch + (sch | subject)
+[1] "log"
+            Estimate Std. Error t-value
+(Intercept)  -5.4609     0.0873 -62.553
+sch           0.2976     0.1246   2.389
+[1] "Estimates for logarithm of tau=var(u_phi)"
+        Estimate Std. Error t-value
+subject   -1.123    0.08297  -13.53
+[1] "========== Likelihood Function Values and Condition AIC =========="
+                                                        [,1]
+-2ML (-2 p_v(mu),v(phi) (h))          :            -7037.247
+-2RL (-2 p_beta(mu),v(mu),beta(phi),v(phi) (h)) :  -6973.585
+cAIC                           :                   -7280.780
+Scaled deviance: 2948.361 on 2817.492 degrees of freedom
+> plotdhglm(resschhglm)
+> plotdhglm(resschdhglm)
+\begin{Sinput}
+data(respiratory, package="mdhglm")
+model_mu<-DHGLMMODELING(Model="mean", Link="logit",
+LinPred=y~as.factor(treatment)+as.factor(sex)+age+as.factor(center)
++baseline+past+(1|patient),RandDist="gaussian",
+LinkRandVariance="log",
+LinPredRandVariance=lambda~1+age+(1|patient),
+RandDistRandVariance="gaussian")
+model_phi<-DHGLMMODELING(Model="dispersion",Link="log")
+fit<-dhglmfit(RespDist="binomial",DataMain=respiratory,
+ MeanModel=model_mu,DispersionModel=model_phi)
+plotdhglm(fit,type="lambda")
+\end{Sinput}
+\begin{Sinput}
+data(salamander, package="mdhglm")
+model_mu<-DHGLMMODELING(Model="mean",Link="logit",
+LinPred=Mate~TypeM+TypeF+TypeM*TypeF+(1|FeMale)+(1|Male),
+RandDist=c("gaussian","gaussian"),
+LinkRandVariance="log",
+LinPredRandVariance=lambda~1+(1|FeMale)+(1|Male),
+RandDistRandVariance=c("gaussian","gaussian"))
+model_phi<-DHGLMMODELING(Model="dispersion")
+fit11<-dhglmfit(RespDist="binomial",DataMain=salamander,
+	MeanModel=model_mu,DispersionModel=model_phi)
+\end{Sinput}
+\begin{Sinput}
+data(bacteria, package="mdhglm")
+model_mu<-DHGLMMODELING(Model="mean", Link="logit",
+LinPred=y1 ~ trt  + (1 | ID),RandDist="gaussian",
+LinkRandVariance="log",
+LinPredRandVariance=lambda~1+(1|ID),
+RandDistRandVariance=c("gaussian"))
+model_phi<-DHGLMMODELING(Model="dispersion")
+fit<-dhglmfit(RespDist="binomial",DataMain=bacteria,
+MeanModel=model_mu,DispersionModel=model_phi)
+\end{Sinput}
+> data(stroke,package="mdhglm")
+> # y1 : SBP for END patient
+> # y2 : SBP for non-END patient
+> model_mu<-DHGLMMODELING(Model=''mean'', Link=''identity'',
++ LinPred=y1~1+(1|time),RandDist="gaussian",spline="cubic")
+> model_phi<-DHGLMMODELING(Model="dispersion",Link="log",
++ LinPred=y1~1+(1|time),RandDist="gaussian",spline="cubic")
+> res<-dhglmfit(RespDist="gaussian",DataMain=sch,
++ MeanModel=model_mu,DispersionModel=model_phi)
+> model_mu<-DHGLMMODELING(Model="mean", ...)
+> model_phi<-DHGLMMODELING(Model="dispersion", ...)
+> dhglmfit(RespDist="gaussian",DataMain=example,
++ MeanModel=model_mu,DispersionModel=model_phi)
+DHGLMMODELING(Model="mean",Link=NULL,LinPred="constant",RandDist=NULL,
+Offset=NULL,LMaxtrix=NULL,LinkRandVariance=NULL,LinPredRandVariance=NULL,
+RandDistRandVaraince="log", LinkRandVariance2=NULL,
+LinPredRandVariance2=NULL, spline=NULL, temporalspatial=NULL, Neighbor=NULL)
+DHGLMMODELING(Model="dispersion",Link=NULL,LinPred=''constant'',RandDist=NULL,
+Offset=NULL,LMaxtrix=NULL,LinkRandVariance=NULL,LinPredRandVariance=NULL,
+spline=NULL, temporalspatial=NULL, Neighbor=NULL)
+dhglmfit(RespDist="gaussian",BinomialDen=NULL, DataMain, MeanModel,
+DispersionModel=NULL,PhiFix=NULL,LamFix=NULL,mord=1,dord=1,Maxiter=200,
+convergence=1e-06)
+\begin{Sinput}
+data(sleepstudy,package="nlme")
+model_mu<-DHGLMMODELING(Model="mean", Link="identity",
+LinPred=Reaction~ Days +
+(1|Subject)+(Days|Subject),
+RandDist="gaussian")
+model_phi<-DHGLMMODELING(Model="dispersion")
+res_hglm<-dhglmfit(RespDist="gaussian",DataMain=sleepstudy,
+MeanModel=model_mu,DispersionModel=model_phi)
+\end{Sinput}
+
+
+Chapter 7
+\begin{Sinput}
+> jm1<-DHGLMMODELING(Link="identity", LinPred=y1~x1+(1|id1),
+ 	RandDist="gaussian")
+> jm2<-DHGLMMODELING(Link="logit", LinPred=y2~x2+(1|id2),
+	RandDist="gaussian")
+> res_corr<-jointfit(RespDist=c("gaussian","binomial"),
+	DataMain=list(data1,data2),
+	MeanModel=list(jm1,jm2),
+	structure="correlated",Init_Corr=0.1,
+	mord = 0, dord = 1,
+	Maxiter = 200, convergence = 10^-6)
+\end{Sinput}
+\begin{Sinput}
+> data(eg_data)
+> jm1<-DHGLMMODELING(Link="identity",
++	LinPred=y1~dose+dose^2+(1|litter),
++	RandDist="gaussian")
+> jm2<-DHGLMMODELING(Link="logit",
++	LinPred=y2~dose+dose^2+(1|litter),
++	RandDist="gaussian")
+\end{Sinput}
+\begin{Sinput}
+> res_ind<-jointfit(RespDist=
++	c("gaussian","binomial"),
++	DataMain=list(eg_data,eg_data),
++	MeanModel=list(jm1,jm2),
++	structure="independent")
+\end{Sinput}
+\begin{Sinput}
+> res_sat<-jointfit(RespDist=
++	c("gaussian","binomial"),
++	DataMain=list(eg_data,eg_data),
++	MeanModel=list(jm1,jm2),
++	structure="correlated")
+\end{Sinput}
+\begin{Sinput}
+> res_shared<-jointfit(RespDist=
++	c("gaussian","binomial"),
++	DataMain=list(eg_data,eg_data),
++	MeanModel=list(jm1,jm2),
++	structure="shared")
+\end{Sinput}
+\begin{Sinput}
+> data(ra_data)
+> jm1<-DHGLMMODELING(Link="identity",
++	LinPred=y1~time+age+sex+(1+time|subject),
++	RandDist=c("gaussian","gaussian"))
+> jm2<-DHGLMMODELING(Link="logit",
++	LinPred=y2~time+age+sex+(1|subject),
++	RandDist="gaussian"))
+> jm3<-DHGLMMODELING(Link="logit",
++	LinPred=y3~time+age+sex+(1|subject),
++	RandDist="gaussian"))
+\end{Sinput}
+\begin{Sinput}
+> res_ind<-jointfit(RespDist=
++	c("gaussian","binomial","binomial"),
++	DataMain=list(ra_data,ra_data,ra_data),
++	MeanModel=list(jm1,jm2,jm3),
++	structure="correlated")
+\end{Sinput}
+\begin{Sinput}
+> data(cog)
+> jm1<-DHGLMMODELING(Link="identity",
++	LinPred=y1~x1+as.factor(x2)+as.factor(x3)+
++    as.factor(x4)+x5+(1|pairnum),
++	RandDist=c("gaussian"))
+> jm2<-DHGLMMODELING(Link="identity",
++	LinPred=y1~x1+as.factor(x2)+as.factor(x3)+
++    as.factor(x4)+x5+(1|pairnum),
++	RandDist=c("gaussian"))
+> jm3<-DHGLMMODELING(Link="identity",
++	LinPred=y1~x1+as.factor(x2)+as.factor(x3)+
++    as.factor(x4)+x5+(1|pairnum),
++	RandDist=c("gaussian"))
+> jm4<-DHGLMMODELING(Link="identity",
++	LinPred=y1~x1+as.factor(x2)+as.factor(x3)+
++    as.factor(x4)+x5+(1|pairnum),
++	RandDist=c("gaussian"))
+> jd1<-DHGLMMODELING(Model="dispersion",
++   Link="log", LinPred=phi~x5)
+> jd2<-DHGLMMODELING(Model="dispersion",
++   Link="log", LinPred=phi~x5)
+> jd3<-DHGLMMODELING(Model="dispersion",
++   Link="log", LinPred=phi~x5)
+> jd4<-DHGLMMODELING(Model="dispersion",
++   Link="log", LinPred=phi~x5)
+\end{Sinput}
+\begin{Sinput}
+> res1<-jointfit(RespDist=
++	c("gaussian","gaussian","gaussian","gaussian"),
++	DataMain=list(cog,cog,cog,cog),
++	MeanModel=list(jm1,jm2,jm3,jm4),
++	DispersionModel=list(jm1,jm2,jm3,jm4),
++	structure="correlated")
+\end{Sinput}
+\begin{Sinput}
+> data(cog)
+> jm1<-DHGLMMODELING(Link="identity",
++	LinPred=y1~x1+...+x20+(1|id),
++	RandDist=c("gaussian"))
+> jm2<-DHGLMMODELING(Link="identity",
++	LinPred=y2~x1+...+x20+(1|id),
++	RandDist=c("gaussian"))
+> jm3<-DHGLMMODELING(Link="identity",
++	LinPred=y3~x1+...+x20+(1|id),
++	RandDist=c("gaussian"))
+> jm4<-DHGLMMODELING(Link="identity",
++	LinPred=y4~x1+...+x20+(1|id),
++	RandDist=c("gaussian"))
+\end{Sinput}
+\begin{Sinput}
+> res1<-jointfit(RespDist=
++	c("gaussian","gaussian","gaussian","gaussian"),
++	DataMain=list(cog,cog,cog,cog),
++	MeanModel=list(jm1,jm2,jm3,jm4),
++	structure="correlated")
+\end{Sinput}
+\begin{Sinput}
+> jd<-DHGLMMODELING(Model="dispersion",Link="log",
++	LinPred=phi~1+(1|id),
++	RandDist=c("gaussian"))
+\end{Sinput}
+\begin{Sinput}
+> res2<-jointfit(RespDist=
++	c("gaussian","gaussian","gaussian","gaussian"),
++	DataMain=list(cog,cog,cog,cog),
++	MeanModel=list(jm1,jm2,jm3,jm4),
++	DispersionModel=list(jd,jd,jd,jd),
++	structure="correlated")
+\end{Sinput}
+\begin{Sinput}
+> data(cog)
+> jm11<-DHGLMMODELING(Link="identity",
++	LinPred=y1~x1+...+x20+(1|id),
++	RandDist=c("gaussian"),
++   LinkRandVariance="log",
++   LinPredRandVariance=lambda~1+(1|id),
++   RandDistRandVariance="gaussian")
+> jm21<-DHGLMMODELING(Link="identity",
++	LinPred=y2~x1+...+x20+(1|id),
++	RandDist=c("gaussian"),
++   LinkRandVariance="log",
++   LinPredRandVariance=lambda~1+(1|id),
++   RandDistRandVariance="gaussian")
+> jm31<-DHGLMMODELING(Link="identity",
++	LinPred=y3~x1+...+x20+(1|id),
++	RandDist=c("gaussian"),
++   LinkRandVariance="log",
++   LinPredRandVariance=lambda~1+(1|id),
++   RandDistRandVariance="gaussian")
+> jm41<-DHGLMMODELING(Link="identity",
++	LinPred=y4~x1+...+x20+(1|id),
++	RandDist=c("gaussian"),
++   LinkRandVariance="log",
++   LinPredRandVariance=lambda~1+(1|id),
++   RandDistRandVariance="gaussian")
+\end{Sinput}
+\begin{Sinput}
+> res3<-jointfit(RespDist=
++	c("gaussian","gaussian","gaussian","gaussian"),
++	DataMain=list(cog,cog,cog,cog),
++	MeanModel=list(jm11,jm21,jm31,jm41),
++	DispersionModel=list(jd,jd,jd,jd),
++	structure="correlated")
+\end{Sinput}
+\begin{Sinput}
+> data(motherStress,package="mmm")
+> jm1<-DHGLMMODELING(Link="logit",
++	LinPred=stress~married+education
++   +employed+race+csex+chlth
++   +mhlth+housize+bstress+billness
++   +week+(1|id),
++	RandDist="gaussian")
+> jm2<-DHGLMMODELING(Link="logit",
++	LinPred=stress~married+education
++   +employed+race+csex+chlth
++   +mhlth+housize+bstress+billness
++   +week+(1|id),
++	RandDist="gaussian")
+\end{Sinput}
+\begin{Sinput}
+> res_ind<-jointfit(RespDist=
++	c("binomial","binomial"),
++	DataMain=list(motherStress,motherStress),
++	MeanModel=list(jm1,jm2),
++	structure="independent")
+\end{Sinput}
+\begin{Sinput}
+> res_sat<-jointfit(RespDist=
++	c("binomial","binomial"),
++	DataMain=list(motherStress,motherStress),
++	MeanModel=list(jm1,jm2),
++	structure="correlated")
+\end{Sinput}
+\begin{Sinput}
+> res_shared<-jointfit(RespDist=
++	c("binomial","binomial"),
++	DataMain=list(motherStress,motherStress),
++	MeanModel=list(jm1,jm2),
++	structure="shared")
+\end{Sinput}
+\begin{Sinput}
+> jm11<-DHGLMMODELING(Link="logit",
++	LinPred=stress~married+education
++   +employed+race+csex+chlth
++   +mhlth+housize+bstress+billness
++   +week+(1|id),
++	RandDist="gaussian",
++   LinkRandVariance="log",
++   LinPredRandVariance=lambda~1+(1|id),
++   RandDistRandVariance="gaussian")
+> jm21<-DHGLMMODELING(Link="logit",
++	LinPred=stress~married+education
++   +employed+race+csex+chlth
++   +mhlth+housize+bstress+billness
++   +week+(1|id),
++	RandDist="gaussian",
++   LinkRandVariance="log",
++   LinPredRandVariance=lambda~1+(1|id),
++   RandDistRandVariance="gaussian")
+> res_dhglm<-jointfit(RespDist=
++	c("binomial","binomial"),
++	DataMain=list(motherStress,motherStress),
++	MeanModel=list(jm11,jm21),
++	structure="correlated")
+\end{Sinput}
+\begin{Sinput}
+> fit<-mmm(formula=cbind(stress, illness)~
++    married+education
++   +employed+race+csex+chlth
++   +mhlth+housize+bstress+billness
++   +week,
++   id=motherStress$id,
++   data=motherStress,
++   family=binomial(link=logit),
++   corStruct="exchangeable")
+\end{Sinput}
+\begin{Sinput}
+> data(PBC910,package="mixAK")
+> jm1<-DHGLMMODELING(Model="mean",Link="identity",
++	LinPred=lbili~month+(1|id),
++	RandDist=c("gaussian"))
+> jm2<-DHGLMMODELING(Model="mean",Link="identity",
++	LinPred=platelet~month+(1|id),
++	RandDist=c("gaussian"))
+> jm3<-DHGLMMODELING(Model="mean",Link="logit",
++	LinPred=spiders~month+(1|subject),
++	RandDist=c("gaussian"))
+\end{Sinput}
+\begin{Sinput}
+> res<-jointfit(RespDist=
++	c("gaussian","gaussian","binomial"),
++	DataMain=list(PBC910,PBC910,PBC910),
++	MeanModel=list(jm1,jm2,jm3),
++	structure="correlated")
+\end{Sinput}
+\begin{Sinput}
+> jd1<-DHGLMMODELING(Model="dispersion",Link="log",
++	LinPred=phi~month+(1|id),
++	RandDist=c("gaussian"))
+> jd2<-DHGLMMODELING(Model="dispersion",Link="log",
++	LinPred=phi~month+(1|id),
++	RandDist=c("gaussian"))
+> jd3<-DHGLMMODELING(Model="dispersion")
+\end{Sinput}
+\begin{Sinput}
+> res<-jointfit(RespDist=
++	c("gaussian","gaussian","binomial"),
++	DataMain=list(PBC910,PBC910,PBC910),
++	MeanModel=list(jm1,jm2,jm3),
++   DispersionModel=list(jd1,jd2,jd3),
++	structure="correlated")
+\end{Sinput}
+\begin{Sinput}
+> # read variables for continuous response
+> data(ech_data1)
+> # read variables for missingness
+> data(ech_data2)
+> jm1m<-DHGLMMODELING(Model="mean",Link="identity",
++    LinPred=y1~x1+x2+time+sch+sch*x1+sch*x2+(1|subject),
++    RandDist="gaussian")
+> jm1d<-DHGLMMODELING(Model="dispersion",Link="log",
++    LinPred=phi~sch+(sch|subject),
++    RandDist="gaussian")
+> jm2m<-DHGLMMODELING(Model="mean",Link="probit",
++    LinPred=y2~x1+x2+time+sch+sch*x1+sch*x2+(1|subject),
++    RandDist="gaussian")
+> jm2d<-DHGLMMODELING(Model="dispersion")
+\end{Sinput}
+\begin{Sinput}
+> res_ind<-jointfit(RespDist=
++	c("gaussian","binomial"),
++  DataMain=list(sch_data1,sch_data2),
++	MeanModel=list(jm1m,jm2m),
++	DispersionModel=list(jm1d,jm2d),
++  structure="independent")
+\end{Sinput}
+\begin{Sinput}
+> res_selection<-jointfit(RespDist=
++	c("gaussian","binomial"),
++  DataMain=list(sch_data1,sch_data2),
++	MeanModel=list(jm1m,jm2m),
++	DispersionModel=list(jm1d,jm2d),
++  structure="selection")
+\end{Sinput}
+\begin{Sinput}
+> data(factor)
+> jm1<-DHGLMMODELING(Model="mean",Link="logit",
++    LinPred=y1~1+(1|subject),
++    RandDist="gaussian")
+> jm2<-DHGLMMODELING(Model="mean",Link="logit",
++    LinPred=y2~1+(1|subject),
++    RandDist="gaussian")
+> jm3<-DHGLMMODELING(Model="mean",Link="logit",
++    LinPred=y3~1+(1|subject),
++    RandDist="gaussian")
+> jm4<-DHGLMMODELING(Model="mean",Link="logit",
++    LinPred=y4~1+(1|subject),
++    RandDist="gaussian")
+> jm5<-DHGLMMODELING(Model="mean",Link="logit",
++    LinPred=y5~1+(1|subject),
++    RandDist="gaussian")
+> jm6<-DHGLMMODELING(Model="mean",Link="logit",
++    LinPred=y6~1+(1|subject),
++    RandDist="gaussian")
+\end{Sinput}
+\begin{Sinput}
+> res<-jointfit(RespDist=c("binomial","binomial",
++ "binomial","binomial","binomial","binomial",),
++ DataMain=list(factor,factor,factor,factor,factor,factor),
++ MeanModel=list(jm1,jm2,jm3,jm4,jm5,jm6),
++ structure="factor",
++ factor=c(1,1,1,2,2,2),
++ REML=TRUE,order=2)
+\end{Sinput}
+jointfit(RespDist=c("gaussian", "gaussian"),BinomialDen=NULL, DataMain, MeanModel=,
+DispersionModel=,PhiFix=NULL,LamFix=NULL,mord=1,dord=1,Maxiter=200,
+convergence=1e-06,structure="correlated",Init_Corr=,EstimateCorrelation=TRUE)
+
+
+Chapter 8
+> library(survival)
+> data(rats)
+> rat_cox <- frailtyHL(Surv(time,status)
++ ~rx+(1|litter), rats,
++ varfixed=TRUE, varinit=c(0))
+iteration :
+           4
+convergence :
+  4.801639e-09
+[1] "converged"
+[1] "Results from the log-normal frailty model"
+[1] "Number of data : "
+[1] 150
+[1] "Number of event : "
+[1] 40
+[1] "Model for conditional hazard : "
+Surv(time, status) ~ rx + (1 | litter)
+[1] "Method : HL(0,1)"
+[1] "Estimates from the mean model"
+   Estimate Std. Error t-value  p-value
+rx   0.8982     0.3174    2.83 0.004655
+[1] "Estimates from the dispersion model"
+       Estimate Std. Error
+litter "0"      "NULL"
+       -2h0  -2*hp -2*p_b,v(hp)
+[1,] 363.69 363.69   364.15
+       cAIC   mAIC   rAIC
+[1,] 365.69 365.69 364.15
+> rat_ln11 <- frailtyHL(Surv(time,status)~rx+(1|litter),
++ rats, RandDist="Normal", mord=1, dord=1)
+iteration :
+          87
+convergence :
+   9.97616e-07
+[1] "converged"
+[1] "Results from the log-normal frailty model"
+[1] "Number of data : "
+[1] 150
+[1] "Number of event : "
+[1] 40
+[1] "Model for conditional hazard : "
+Surv(time, status) ~ rx + (1 | litter)
+[1] "Method : HL(1,1)"
+[1] "Estimates from the mean model"
+   Estimate Std. Error t-value  p-value
+rx   0.9107     0.3226   2.823 0.004754
+[1] "Estimates from the dispersion model"
+       Estimate Std. Error
+litter   0.4272     0.4232
+       -2h0  -2*hp -2*p_v(hp) -2*p_b,v(hp)
+[1,] 335.97 397.36     362.14    362.56
+       cAIC   mAIC   rAIC
+[1,] 362.22 366.14 364.56
+> rat_g12 <- frailtyHL(Surv(time,status)~rx+(1|litter),
++ rats, RandDist="Gamma", mord=1, dord=2)
+iteration :
+         170
+convergence :
+  9.567765e-07
+[1] "converged"
+[1] "Results from the gamma frailty model"
+[1] "Number of data : "
+[1] 150
+[1] "Number of event : "
+[1] 40
+[1] "Model for conditional hazard : "
+Surv(time, status) ~ rx + (1 | litter)
+[1] "Method : HL(1,2)"
+[1] "Estimates from the mean model"
+   Estimate Std. Error t-value  p-value
+rx   0.9126     0.3236    2.82 0.004806
+[1] "Estimates from the dispersion model"
+       Estimate Std. Error
+litter   0.5757     0.5977
+     -2h0  -2*hp  -2*p_v(hp) -2*p_b,v(hp) -2*s_b,v(hp)
+[1,] 331.60 413.85   365.35   365.77      362.12
+      cAIC   mAIC   rAIC
+[1,] 365.3 369.35 367.77
+> library(survival)
+> data(cgd)
+> cgd11 <- frailtyHL(Surv(tstop-tstart,status)
++ ~treat+(1|center)+(1|id), cgd,
++ RandDist="Normal",mord=1, dord=1)
+iteration :
+         157
+convergence :
+  9.336249e-07
+[1] "converged"
+[1] "Results from the log-normal frailty model"
+[1] "Number of data : "
+[1] 203
+[1] "Number of event : "
+[1] 76
+[1] "Model for conditional hazard : "
+Surv(tstop-tstart,status)~treat+(1|center)+(1|id)
+[1] "Method : HL(1,1)"
+[1] "Estimates from the mean model"
+            Estimate Std. Error t-value   p-value
+treatrIFN-g   -1.184     0.3407  -3.476 0.0005085
+[1] "Estimates from the dispersion model"
+       Estimate Std. Error
+center  0.02986     0.1572
+id      1.00235     0.5089
+       -2h0  -2*hp -2*p_v(hp) -2*p_b,v(hp)
+[1,] 603.3 853.66     692.63       692.95
+       cAIC   mAIC   rAIC
+[1,] 684.92 698.63 696.95
+> library(survival)
+> data(bladder)
+> bladder_cox <- frailtyHL(Surv(stop,event)
++ ~rx+number+size+(1|id), bladder,
++ varfixed=TRUE, varinit=c(0))
+iteration :
+           5
+convergence :
+   1.33928e-09
+[1] "converged"
+[1] "Results from the Cox model"
+[1] "Number of data : "
+[1] 340
+[1] "Number of event : "
+[1] 112
+[1] "Model for conditional hazard : "
+Surv(stop, event) ~ rx + number + size + (1 | id)
+[1] "Method : HL(0,1)"
+[1] "Estimates from the mean model"
+       Estimate Std. Error t-value   p-value
+rx     -0.53839    0.19986 -2.6938 7.063e-03
+number  0.19234    0.04646  4.1395 3.481e-05
+size   -0.05439    0.06960 -0.7815 4.345e-01
+[1] "Estimates from the dispersion model"
+   Estimate Std. Error
+id "0"      "NULL"
+       -2h0  -2*hp -2*p_b,v(hp)
+[1,] 1178.1 1178.1       1187.4
+       cAIC   mAIC   rAIC
+[1,] 1184.1 1184.1 1187.4
+> bladder11 <- frailtyHL(Surv(stop,event)
++ ~rx+number+size+(1|id), bladder,
++ RandDist="Normal",mord=1, dord=1)
+iteration :
+          41
+convergence :
+   9.61491e-07
+[1] "converged"
+[1] "Results from the log-normal frailty model"
+[1] "Number of data : "
+[1] 340
+[1] "Number of event : "
+[1] 112
+[1] "Model for conditional hazard : "
+Surv(stop, event) ~ rx + number + size + (1 | id)
+[1] "Method : HL(1,1)"
+[1] "Estimates from the mean model"
+       Estimate Std. Error t-value  p-value
+rx     -0.84420     0.4283 -1.9709 0.048733
+number  0.31995     0.1148  2.7865 0.005328
+size   -0.02004     0.1428 -0.1403 0.888389
+[1] "Estimates from the dispersion model"
+   Estimate Std. Error
+id    2.211     0.6856
+       -2h0  -2*hp -2*p_v(hp) -2*p_b,v(hp)
+[1,] 983.15 1249.6     1122.2       1126.7
+       cAIC   mAIC   rAIC
+[1,] 1088.5 1130.2 1128.7
+> bladder_g12 <- frailtyHL(Surv(stop,event)
++ ~rx+number+size+(1|id),bladder,
++ RandDist="Gamma", mord=1, dord=2)
+iteration :
+          76
+convergence :
+  9.482349e-07
+[1] "converged"
+[1] "Results from the gamma frailty model"
+[1] "Number of data : "
+[1] 340
+[1] "Number of event : "
+[1] 112
+[1] "Model for conditional hazard : "
+Surv(stop, event) ~ rx + number + size + (1 | id)
+[1] "Method : HL(1,2)"
+[1] "Estimates from the mean model"
+       Estimate Std. Error t-value p-value
+rx     -0.93030     0.4385 -2.1215 0.03388
+number  0.33725     0.1318  2.5587 0.01051
+size   -0.01692     0.1517 -0.1115 0.91122
+[1] "Estimates from the dispersion model"
+   Estimate Std. Error
+id    2.358     0.6887
+       -2h0  -2*hp -2*p_v(hp) -2*s_v(hp) -2*p_b,v(hp) -2*s_b,v(hp)
+[1,] 977.65 1281.8       1134     1115.6       1138.1       1119.6
+     cAIC   mAIC   rAIC
+[1,] 1103 1123.6 1121.6
+> library(mixor)
+> data(SmokeOnSet)
+# Fit Cox model
+> smoke_cox <- frailtyHL(Surv(smokonset,event)
++ ~SexMale+cc+tv+(1|school), SmokeOnset,
++ grouped=TRUE,
++ varfixed=TRUE, varinit=c(0))
+iteration :
+           3
+convergence :
+   2.77905e-09
+[1] "converged"
+[1] "Results from the Cox model"
+[1] "Number of data : "
+[1] 1556
+[1] "Number of event : "
+[1] 634
+[1] "Model for conditional hazard : "
+frailtyHL(Surv(smokonset,event)~SexMale+cc+tv+(1|school)
+[1] "Method : HL(1,1)"
+[1] grouped : TRUE
+[1] "Estimates from the mean model"
+                      Estimate  Std. Error   z value P(>|z|)
+(Intercept)         -206.013467   0.653472 -315.2613  <1e-16
+gamma2              -315.45364    0.862413 -365.7807  <1e-16
+gamme3                 0.87654    0.007643  114.6853  <1e-16
+SexMale              21.963457    0.315437   69.6287  <1e-16
+cc                  -18.661435    0.050312 -370.9140  <1e-16
+tv                   -6.347921    0.043137 -147.1573  <1e-16
+[1] "Estimates from the dispersion model"
+     Estimate Std. Error
+school "0"      "NULL"
+       -2ML   -2RL      cAIC
+[1,] 39523.6  40189.8  37736.0
+# Fit grouped duration model
+> smoke_11 <- frailtyHL(Surv(smokonset,event)
++ ~SexMale+cc+tv+(1|school), SmokeOnset,
++ grouped=TRUE)
+iteration :
+           25
+convergence :
+   9.72315e-07
+[1] "converged"
+[1] "Results from the log-normal frailty model"
+[1] "Number of data : "
+[1] 1556
+[1] "Number of event : "
+[1] 634
+[1] "Model for conditional hazard : "
+frailtyHL(Surv(smokonset,event)~SexMale+cc+tv+(1|school)
+[1] "Method : HL(1,1)"
+[1] grouped : TRUE
+[1] "Estimates from the mean model"
+                      Estimate  Std. Error   z value P(>|z|)
+(Intercept)        -276.105404    0.683146 -404.1674  <1e-16
+gamma2             -327.818555    1.000000 -327.8186  <1e-16
+gamme3                1.523108    0.000000       Inf  <1e-16
+SexMale              25.632504    0.337942   75.8489  <1e-16
+cc                  -20.002003    0.060507 -330.5743  <1e-16
+tv                   -7.116128    0.060361 -117.8932  <1e-16
+[1] "Estimates from the dispersion model"
+   Estimate Std. Error
+school   0.1645    0.8112
+       -2ML   -2RL      cAIC
+[1,] 39457.1  40123.6  37563.0
+> library(crrSC)
+> data(cdata,package="crrSC")
+> cdata$x<-cdata$z
+> cdata$time<-cdata$ftime
+> cdata$status<-cdata$fstatus
+> res<-cmpHL(Surv(time,status==1)~x+(1|ID),
++ Surv(time,status==2)~x+(1|ID), cdata,
++ RandDist="Normal")
+    ''Estimates from the mean model''
+[1] LinPred=Surv(ftime,fstatus==1)~x+(1|ID)
+       Estimate Std. Error t-value p-value
+z       0.13244  0.1952    0.6783  0.49756
+[1] LinPred=Surv(ftime,fstatus==2)~x+(1|ID)
+       Estimate Std. Error t-value p-value
+z       0.74953  0.3161    2.3711  0.0177
+[1] ''Estimates for logarithm of variance of random effect''
+     Estimate
+ID    0.2193
+[1] ''Estimates for the shared parameter''
+       Estimate
+gamma   -1.2177
+\begin{Sinput}
+## Weibull baseline hazard model
+data(scr, package="jointdhglm")
+scr_surv<-subset(scr,first==1)
+jm1<-jointmodeling(Model="mean",RespDist="gaussian",Link="identity",
+  LinPred=icr~month+sex+age+(1|id),RandDist="gaussian")
+jm2<-jointmodeling(Model="mean",RespDist="Weibull",Link="log",
+  LinPred=Surv(sur_time,status==1)~sex+age+(1|id),RandDist="gaussian")
+res1<-jmfit(jm1,jm2,scr,scr_surv)
+## Non-parametric baseline hazard model
+jm1<-jointmodeling(Model="mean",RespDist="gaussian",Link="identity",
+  LinPred=icr~month+sex+age+(1|id),RandDist="gaussian")
+jm2<-jointmodeling(Model="mean",RespDist="FM",Link="log",
+  LinPred=Surv(sur_time,status==1)~sex+age+(1|id),RandDist="gaussian")
+res2<-jmfit(jm1,jm2,scr,scr_surv)
+\end{Sinput}
+\begin{Sinput}
+## Linear mixed model
+model_mu<-DHGLMMODELING(Model="mean",Link="identity",
+LinPred=icr~month+sex+age+(1|id),RandDist="gaussian")
+model_phi<-DHGLMMODELING(Model="dispersion")
+fit1<-dhglmfit(RespDist="gaussian",DataMain=scr,
+MeanModel=model_mu,DispersionModel=model_phi)
+## Non-parametric baseline hazard model
+fit2<-frailtyHL(Surv(sur_time,status)~
+sex+age+(1|id),RandDist="Normal",scr_surv)
+## Weibull baseline hazard model
+fit2<-frailtyHL(Surv(sur_time,status)~
+sex+age+(1|id),RandDist="Normal",scr_surv,
+RespDist="Weibull")
+\end{Sinput}
+\begin{Sinput}
+## Weibull baseline hazard model
+data(aids, package="JM")
+data(aids.id, package="JM")
+jm1<-jointmodeling(Model="mean",RespDist="gaussian",Link="identity",
+  LinPred=sqrt(CD4)~obstime+drug+(1|patient),RandDist="gaussian")
+jm2<-jointmodeling(Model="mean",RespDist="Weibull",Link="log",
+  LinPred=Surv(Time,death)~drug+(1|patient),RandDist="gaussian")
+res1<-jmfit(jm1,jm2,aids,aids.id)
+## Non-parametric baseline hazard model
+jm1<-jointmodeling(Model="mean",RespDist="gaussian",Link="identity",
+  LinPred=sqrt(CD4)~obstime+drug+(1|patient),RandDist="gaussian")
+jm2<-jointmodeling(Model="mean",RespDist="FM",Link="log",
+  LinPred=Surv(Time,death)~drug+(1|patient),RandDist="gaussian")
+res2<-jmfit(jm1,jm2,aids,aids.id)
+\end{Sinput}
+\begin{Sinput}
+## Linear mixed model
+model_mu<-DHGLMMODELING(Model="mean",Link="identity",
+LinPred=sqrt(CD4)~obstime+drug+(1|patient),RandDist="gaussian")
+model_phi<-DHGLMMODELING(Model="dispersion")
+fit1<-dhglmfit(RespDist="gaussian",DataMain=aids,
+MeanModel=model_mu,DispersionModel=model_phi)
+## Non-parametric baseline hazard model
+fit2<-frailtyHL(Surv(Time,death)~drug+(1|patient),
+RandDist="Normal",aids.id)
+## Weibull baseline hazard model
+fit2<-frailtyHL(Surv(Time,death)~drug+(1|patient)
+,RandDist="Normal",aids.id,
+RespDist="Weibull")
+\end{Sinput}
+# joint model for repeated measures and competing even time
+> data(pbc2,package="JM")
+> data(pbc2.id,package="JM")
+> pbc2$sex<-if(pbc2$sex=="male",1,0)
+> pbc2.id$sex<-if(pbc2.id$sex=="male",1,0)
+> pbc2$drug<-if(pbc2$drug=="D-penicil",1,0)
+> pbc2.id$drug<-if(pbc2.id$drug=="D-penicil",1,0)
+> jm1<-jointmodeling(Model="mean",RespDist="gaussian",Link="identity",
++  LinPred=log(serBilir)~year+drug+sex+(1|id),RandDist="gaussian")
+> jm2<-jointmodeling(Model="mean",RespDist="FM",Link="log",
++  LinPred=Surv(years,status=="dead")~drug+sex+(1|id),
++  RandDist="gaussian")
+> jm3<-jointmodeling(Model="mean",RespDist="FM",Link="log",
++  LinPred=Surv(years,status=="transplanted")~drug+sex+(1|id),
++  RandDist="gaussian")
+> res<-jmfit(jm1,jm2,jm3,pbc2,pbc2.id,pbc2.id)
+    ''Estimates from the mean model''
+[1] LinPred=log(serBilir)~year+drug+sex+(1|id)
+            Estimate Std. Error t-value p-value
+(intercept) 1.0007   0.2003    4.9961  0.0000
+year        0.0950   0.0043   21.9416  0.0000
+sex         0.4145   0.1980    2.0933  0.0371
+drug       -0.1256   0.1265   -0.9923  0.3218
+[1] Surv(years,status=="dead")~drug+sex+(1|id)
+       Estimate Std. Error t-value p-value
+sex    0.7963   0.2237    3.5597  0.0004
+drug  -0.0247   0.1753   -0.1409  0.8879
+[1] Surv(years,status=="transplanted")~drug+sex+(1|id)
+       Estimate Std. Error t-value p-value
+sex    0.2106   0.6540    0.3220  0.7474
+drug  -0.7417   0.3812   -1.9457  0.0517
+[1] ''Estimates for logarithm of variance of random effect''
+     Estimate
+id    0.1666
+[1] ''Estimates for logarithm of residual variance''
+Estimate : -1.4182
+[1] ''Estimates for the shared parameter''
+       Estimate
+gamma1   1.3575
+gamma2  -1.6943
+# joint model for competing even time
+jm22<-jointmodeling(Model=''mean'',RespDist=''FM'',Link=''log'',
+  LinPred=Surv(years,status=="dead")~drug+sex+(1|id),
+  RandDist="gaussian")
+jm32<-jointmodeling(Model="mean",RespDist="FM",Link="log",
+  LinPred=Surv(years,status=="transplanted")~drug+sex+(1|id),
+  RandDist="gaussian")
+res<-jmfit(jm22,jm32,pbc2.id,pbc2.id)
+[1] Surv(years,status=="dead")~drug+sex+(1|id)
+       Estimate Std. Error t-value p-value
+sex    0.6506   0.2184    2.9790  0.0029
+drug  -0.0115   0.1692   -0.0681  0.9458
+[1] Surv(years,status=="transplanted")~drug+sex+(1|id)
+       Estimate Std. Error t-value p-value
+sex    0.1258   0.6101    0.2063  0.8370
+drug  -0.3866   0.3772   -1.0257  0.3054
+[1] ''Estimates for logarithm of variance of random effect''
+     Estimate
+id   -1.3654
+[1] ''Estimates for the shared parameter''
+       Estimate
+gamma1   -1.2481
+>coxph(Surv(time, status) ~ rx +
++ frailty(litter,dist= 'gauss'),
++ method = "breslow", rats)
+> coxme(Surv(time, status) ~ rx + (1|litter),
++ ties="breslow", rats)
+> fit.phmm<-phmm(Surv(time, status) ~ rx+(1| litter),
++ rats, Gbs = 2000, Gbsvar = 3000, VARSTART = 1,
++ NINIT = 10, MAXSTEP = 200, CONVERG=90)
+> coxph(Surv(time, status) ~ rx +
++ frailty(litter,dist='gamma'),
++ method = "breslow", rats)
+> coxme(Surv(tstop-tstart,status)~
++ treat+(1|center)+(1|id), ties="breslow" cgd)
+> coxph(Surv(stop, event) ~ rx+number+size
++ +frailty(id,dist='gauss'),
++ method = "breslow", bladder)
+> coxme(Surv(stop, event) ~rx+number+size
++ +(1|id),ties="breslow", bladder)
+> fit.phmm<-phmm(Surv(stop, event)
++ ~ rx+number+size+(1|id),
++ bladder, Gbs = 2000, Gbsvar = 3000, VARSTART = 1,
++ NINIT = 10, MAXSTEP = 200, CONVERG=90)
+> coxph(Surv(stop, event) ~ rx+number+size
++ +frailty(id,dist='gamma'),
++ method = "breslow", bladder)
+\begin{Sinput}
+> result<-frailtyHL(formula=Surv(time,status)~x+(1|id),
++ RandDist="Normal", mord=0, dord=1,
++ Maxiter=200, convergence=10^-6,
++ varfixed=FALSE, varinit=c(0.1))
+\end{Sinput}
+\begin{Sinput}
+data(colon, package="survival")
+# id : id
+# study : 1 for all patients
+# rx : 1=Treatment
+# sex : 1=male
+# age : in years
+# obstruct : obstruction of colon by tumour
+# perfor : perforation of colon
+# adhere : adherence to nearby organs
+# nodes : number of lymph nodes with detectable cancer
+# time : days until event or censoring
+# status : censoring status
+# differ : differentiation of tumour (1=well, 2=moderate, 3=poor)
+# extent : Extent of local spread (1=submucosa, 2=muscle,
+# 3=serosa, 4=contiguous structures)
+# surg : time from surgery to registration (0=short, 1=long)
+# node4 : more than 4 positive lymph nodes
+# etype : event type (1=recurrence,2=death)
+\end{Sinput}
+\begin{Sinput}
+data(eortc, package="coxme")
+# y : survival time
+# uncens : 0=alive, 1=dead
+# center : enrolling center, a number from 1 to 37
+# trt : treatment arm, 0 or 1
+\end{Sinput}
+\begin{Sinput}
+data(colorectal,package="frailtypack")
+# id : identification of each subject
+# time0 : start of interval
+# (0 or previous recurrence time)
+# time1 : recurrence or censoring time
+# new.lesions : Appearance of new lesions status
+#  (0=censored or no event, 1=new lesions)
+# treatment : 1=sequential (S), 2=combination (C)
+# age : Age at baseline (1: <50 years, 2: 50-69 years, 3: >69 years)
+# who.PS : WHO performance status at baseline
+# (1=status 0, 2=status 1, 3=status 2)
+# prev.resection : Previous resection of the primate tumor?
+#  (0=No, 1=Yes)
+# state : death indicator (0=alive, 1=dead)
+# gap.time : interocurrence time or censoring time
+\end{Sinput}
+
+
+Chapter 9
