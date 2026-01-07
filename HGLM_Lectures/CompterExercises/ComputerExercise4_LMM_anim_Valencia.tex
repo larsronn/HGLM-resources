@@ -1,0 +1,242 @@
+
+\documentclass[10pt,a4paper,english]{report}
+\usepackage{amssymb}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\usepackage{makeidx}
+%\usepackage[T1]{fontenc}
+%%\usepackage[latin9]{inputenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{graphics}
+\usepackage[dvips]{epsfig}
+\usepackage{esint}
+\usepackage[authoryear]{natbib}
+\usepackage{rotating}
+\usepackage{relsize}
+\usepackage{Sweave}
+\usepackage{xcolor}
+\usepackage{babel}
+\usepackage{hyperref}
+
+
+
+\begin{document}
+\title{Computer Exercise 4: Linear Mixed Models with Correlated Random Effects}
+\author{Lars Ronnegard}
+\maketitle
+\section*{Introduction}
+The first four exercises focusses on the animal model using two data sets with pedigree information. In the last two exercises your task is to explore semiparametric smoothing. \newline
+\newline
+The first example data set we will use to explore the animal model is the \textbf{l51} data set in the gap package. There are observations on a quantitative trait from 51 related individuals. We will use the hglm package to estimate the additive genetic variance and the residual variance. \newline
+\newline
+An animal model is a linear mixed model with correlated random effects where $y = X\beta + Za + e$ and $V(a)=\mathbf{A}\sigma^2_a$. $\mathbf{A}$ is the additive relationship matrix. 
+\newline
+\newline
+The pedigree in the \textbf{l51} data set can be plotted using the following code.
+
+\begin{Schunk}
+\begin{Sinput}
+library(gap)
+data(l51, package="gap")
+library(kinship2)
+ped <- with(l51, pedigree(id,fid,mid,sex))
+plot(ped)
+\end{Sinput}
+\end{Schunk}
+
+\begin{figure}[h]
+\center \includegraphics[width=1.0\textwidth]{L51_pedigree_plot}
+\caption{Pedigree for the \textbf{l51} data.}
+\label{fig:L51_pedigree_plot}
+\end{figure}
+\newpage 
+
+The following code shows how the additive relationship matrix $\mathbf{A}$ iin an animal model can be computed using the pedigree information \texttt{l51} and the kin.morgan() function in the \textbf{gap} package.
+
+\begin{Schunk}
+\begin{Sinput}
+km <- kin.morgan(l51)
+A <- km$kin.matrix*2
+image(A)
+\end{Sinput}
+\end{Schunk}
+
+\begin{figure}[h]
+\center \includegraphics[width=0.8\textwidth]{L51_A_image}
+\caption{Image plot of the additive relationship matrix for the \textbf{l51} pedigree data.}
+\label{fig:L51_A_image}
+\end{figure}
+
+\newpage 
+
+The following code shows how an animal model can be fitted using the hglm package. If you get stuck, have a look at the YouTube tutorials by Xia Shen at  \url{https://www.youtube.com/user/UppsalaQTL/featured}.
+
+\begin{Schunk}
+\begin{Sinput}
+########## hglm analysis ##########
+library(hglm)
+obs.qt <- !is.na(l51$qt) #Remove missing data
+L <- t( chol( A ) )[ obs.qt, ] #Compute 
+X <- model.matrix( qt ~ 1, data = l51)
+y <- l51$qt[ obs.qt ]
+mod1 <- hglm(y = y,  X = X, Z = L)
+summary(mod1)
+
+\end{Sinput}
+\end{Schunk}
+
+\section*{Exercise 1}
+In a linear mixed model with independent random effects the variance covariance matrix for the response $y$ is: $V(y)=\mathbf{Z}\mathbf{Z}^T\sigma^2_a+\mathbf{I}\sigma^2_a$. \newline
+In an animal model we have: $V(y)=\mathbf{A}\sigma^2_a+\mathbf{I}\sigma^2_a$. \newline
+The two models are equivalent if $\mathbf{Z}=\mathbf{L}$ and $\mathbf{A}=\mathbf{L}\mathbf{L}^T$. \newline
+Check that  $\mathbf{A}=\mathbf{L}\mathbf{L}^T$ in our example.
+
+
+\section*{Exercise 2}
+Identify the variance component estimates from the hglm output. Compute the estimated heritability.
+
+\section*{Exercise 3}
+Compute the estimated breeding values for all individuals in the pedigree using the hglm results.
+
+\section*{Exercise 4 (If you get time)}
+Install the MCMCglmm package.
+Combine the two data sets BTped and BTdata in the package using the code below, and fit an animal model for tarsus length as response and sex as explanatory variable.
+\newline
+Use the hglm package, but first compute the design matrix X, the incidence matrix Z and its Cholesky factorization L.
+\newline
+Make an image plot of the additive relationship matrix.
+\newline
+Make diagnostic plots.
+\newline
+Estimate the heritability for tarsus length.
+
+\begin{Schunk}
+\begin{Sinput}
+data(BTped, package="MCMCglmm")
+head(BTped)
+tail(BTped)
+data(BTdata, package="MCMCglmm")
+head(BTdata)
+summary(BTdata)
+
+invA <- inverseA(BTped)$Ainv
+A <- solve(invA)
+L <- t( chol(as.matrix(A)) )
+obs.tarsus = 213:1040
+ord.data <- merge(BTdata, BTped[obs.tarsus,], sort=FALSE)
+Z0 <- diag(1040)[obs.tarsus,] 
+Z <- Z0 %*% L
+y <- ord.data$tarsus
+\end{Sinput}
+\end{Schunk}
+
+\section*{Exercise 5}
+In this exercise you will explore how fossil age depends on the proportion of strontium in the fossil. First plot the data using the following code. 
+\begin{Schunk}
+\begin{Sinput}
+library(SemiPar)
+data(fossil)
+?fossil
+plot(x=fossil$age, y=fossil$strontium.ratio)
+\end{Sinput}
+\end{Schunk}
+
+
+To be able to perform semiparametric smoothing with the hglm package, we need a function to construct the spatial Matern covariance matrix, which depends on the distance between x values, a range parameter and a dimension parameter.
+\begin{Schunk}
+\begin{Sinput}
+##Function to construct the Matern covariance matrix
+get.matern <-function(d, l, nu) {
+  #Distance matrix d
+  #Range l
+  #Dimension parameter nu
+  if (nu == 0.5) c <- exp(-d*l^(-1))
+  if (nu == 1.5) c <- (1+sqrt(3)*d*l^(-1))*exp(-sqrt(3)*d*l^(-1))
+  if (nu == 2.5) c <- (1+(sqrt(5)*d)*l^(-1)+(5*d^2)*3^(-1)*l^(-2))*exp(-sqrt(5)*d*l^(-1))
+  return(c)
+}
+##
+\end{Sinput}
+\end{Schunk}
+
+We also need a function to make sure that the covariance matrix is positive definite and thereby has good numerical properties.
+\begin{Schunk}
+\begin{Sinput}
+#see Ranjan et al (2011) Technometrics, 53:4, 366-378
+bend <- function(C, OK.cond = 5) {
+  eigVal <- eigen(C)$values
+  #plot(-log10(eigVal))
+  cond0 <- log10(max(eigVal)/min(eigVal)) 
+  delta = max(eigVal)*(10^cond0-10^OK.cond)/(10^cond0*(10^OK.cond-1))
+  C1 <- C
+  diag(C1) = diag(C) + delta
+  return(C1)
+}
+\end{Sinput}
+\end{Schunk}
+
+Before performing the analysis  the data is sorted according to age and the response  is scaled to have a variance of 1 just to simplify plotting at the end.
+\begin{Schunk}
+\begin{Sinput}
+x <- as.numeric(sort(fossil$age))
+y <- scale(fossil$strontium.ratio[sort(fossil$age, index.return=TRUE)$ix])
+plot(x,y, xlab="Age", ylab="Scaled Strontium Ratio")
+\end{Sinput}
+\end{Schunk}
+
+The following code fits the model and plots the smoothed function estimated by the hglm package.
+
+\begin{Schunk}
+\begin{Sinput}
+distMat = as.matrix(dist(x))
+rho = 9.1 #A good first value to try is sd(x)
+nu = 1.5 #Can be either 0.5, 1.5 or 2.5
+C1 <- get.matern(distMat, rho, nu)
+C1 <- bend(C1) 
+image(C1)
+Z <- t(chol(C1))
+N <- length(y)
+X <- matrix(1, N, 1)
+library(hglm)
+mod1 <- hglm(y=y, X=X, Z=Z)
+plot(x,y, xlab="Age", ylab="Scaled Strontium Ratio")
+points(x , mod1$fv, col="red", type="l")
+\end{Sinput}
+\end{Schunk}
+Try different values of \texttt{rho} and \texttt{nu}. Which combination of values seem most reasonable? \newline
+What does the image plot in Figure 3 show?
+
+\begin{figure}[h]
+\center \includegraphics[width=0.8\textwidth]{FossilC1_plot}
+\caption{Image plot of the spatial covariance matrix for the fossil data.}
+\label{fig:spatial}
+\end{figure}
+
+\section*{Exercise 6 (If you get time)}
+Which function is hiding behind the following data??? 
+\begin{Schunk}
+\begin{Sinput}
+x <- 1:100
+y <- c(8.0976, 9.5571, -0.3118, -4.4153, 8.1990, -20.4927, 8.4122, -2.2327, 
+   -2.3094, -9.6534, -0.3404, 21.8501, 5.2310, 6.9091, -7.4827, 10.1867, -8.9181, 
+   -2.6918, 13.4157, 4.2929, 9.5510, 16.8877, -5.9968, -15.7815, -16.1770, 
+   20.3098, -4.1267, 7.5704, 7.4506, -0.7019, 9.4705, 23.8058, 22.1670, 17.7782, 
+   3.6004, 5.9982, -2.2814, -15.7442, 18.7201, 1.2573, 12.1998, -22.5059,
+   -9.4178, 10.1621, 9.3120, 15.1390, -12.6097, 6.4375, 6.5609, -11.3986, 
+   -4.5070, 20.2074, 3.3301, 5.5128, -6.4163, -1.2048, -0.4397, 0.0819, 14.7244, 
+   -20.3520, 8.5935, -0.2709, 16.7784, 20.9254, -7.0288, -27.0844, -9.0063, 
+   -2.2829, -4.1556, -7.8179, 15.5696, 15.1409, 11.2536, 29.5960, 6.5936, 
+   -11.5797, -20.0413, -30.6142, -7.0520, 15.7339, 29.2483, 40.3961, 25.0073, 
+   31.3611, -2.2912, -14.0007, -31.6998, -33.1300, -7.5069, 19.4468, 26.3393, 
+   35.3989, 48.1140, 8.4584, -23.8512, -33.7772, -50.6525, -20.2156, -15.2219, 
+   15.0303)
+par(mfrow=c(1,1))
+plot(x=x, y=y)
+\end{Sinput}
+\end{Schunk}
+
+\end{document}
