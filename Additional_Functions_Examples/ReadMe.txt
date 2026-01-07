@@ -1,4 +1,4 @@
-Here you find additional functionality using the hglm package.
+Here you find additional functionality using the hglm package. You might also find the RepeatABEL package interesting (see https://github.com/larsronn/RepeatABEL_Tutorials) where the hglm package is used to perform genome-wide association studies.
 
 The DHGLM function in the file dhglm_function.R is an implementation of the method described in Ronnegard et al. (2010) <doi:10.1186/1297-9686-42-8>. The file includes a simple simulated example.
 
